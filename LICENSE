@@ -21,7 +21,19 @@ If publishing/distributing your project, make sure to delete or replace the file
 ### Important Notice:
 
 This software includes open-source libraries licensed under GPL and LGPL. By using this software, you agree to comply with the terms of these licenses, including the obligations to make available the source code and to allow users to replace the LGPL libraries if they choose. Please refer to the respective license texts for specific details.
+
 This proprietary software license applies only to the Ocero Engine code written by Brandon Quintin. The use of open-source libraries within this project does not imply any change to their respective licenses.
+
+Good to know: the GCC compiler's license is included because in order to have a working .exe you must dynamically include the proper .dlls in your .exe final output folder.
+You can find these .dlls from your GCC compiler's installation directory.
+I don't expect anyone to seriously use this engine, so no documentation was written, yet if anyone wants to use it, I could write basic documentation on how to create a .exe, and the basics of the engine.
+
+Please contact me at quintinb@student.elms.edu if you want help creating a working .exe for your project.
+
+
+------------------------------- Other Licenses from Libraries Used -------------------------------
+
+
 
 ### Libraries Used
 
