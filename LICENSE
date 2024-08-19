@@ -10,6 +10,14 @@ Permission is granted to students, faculty, and staff of Elms College to use, co
 
 For permission requests or further inquiries, please contact me at quintinb@student.elms.edu
 
+### Important Music License Notice:
+
+The music tracks included in this project are licensed exclusively to Brandon Quintin and cannot be redistributed or used in any derivative works without proper licensing from the original copyright holder.
+
+**If you intend to use this engine for any project, you must first delete or replace the included music files before publishing or distributing your project.**
+
+If publishing/distributing your project, make sure to delete or replace the files in source/resources/music.
+
 ### Important Notice:
 
 This software includes open-source libraries licensed under GPL and LGPL. By using this software, you agree to comply with the terms of these licenses, including the obligations to make available the source code and to allow users to replace the LGPL libraries if they choose. Please refer to the respective license texts for specific details.
