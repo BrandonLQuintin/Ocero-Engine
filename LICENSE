@@ -1,10 +1,19 @@
-### Game License
+### License
 
 Ocero Engine © Brandon Quintin 2024. All rights reserved.
 
-This software is proprietary and may not be copied, distributed, or modified without permission from the copyright holder.
+This software is proprietary and may not be copied, distributed, or modified without permission from the copyright holder, except as stated below.
+
+### Educational Use License:
+
+Permission is granted to students, faculty, and staff of Elms College to use, copy, and modify this software for educational purposes only. This license is non-transferable and does not extend to any commercial use of the software. Any distribution of the software outside of Elms College or for non-educational purposes requires prior written permission from the copyright holder.
 
 For permission requests or further inquiries, please contact me at quintinb@student.elms.edu
+
+### Important Notice:
+
+This software includes open-source libraries licensed under GPL and LGPL. By using this software, you agree to comply with the terms of these licenses, including the obligations to make available the source code and to allow users to replace the LGPL libraries if they choose. Please refer to the respective license texts for specific details.
+This proprietary software license applies only to the Ocero Engine code written by Brandon Quintin. The use of open-source libraries within this project does not imply any change to their respective licenses.
 
 ### Libraries Used
 
@@ -54,8 +63,3 @@ Permission is granted to anyone to use this software for any purpose, including 
 - **License**: GNU Lesser General Public License (LGPL)
 - **License Text**: You may obtain a copy of the GNU Lesser General Public License at <https://www.gnu.org/licenses/lgpl-3.0.en.html>.
 - **Source Code**: The source code for OpenAL can be obtained from <http://openal.org/>.
-
-Important Notice:
-
-This software includes open-source libraries licensed under GPL and LGPL. By using this software, you agree to comply with the terms of these licenses, including the obligations to make available the source code and to allow users to replace the LGPL libraries if they choose. Please refer to the respective license texts for specific details.
-This proprietary software license applies only to the Ocero Engine code written by Brandon Quintin. The use of open-source libraries within this project does not imply any change to their respective licenses.
