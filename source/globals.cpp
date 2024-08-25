@@ -106,7 +106,7 @@ float averageFpsCollection[totalSeconds];
 float zCoordCollection[totalSeconds];
 float totalCalculationTimeCollection[totalSeconds];
 
-float gpuCalculationTimeCollection[totalSeconds];
+float objectRenderTimeCollection[totalSeconds];
 float beginningObjectRenderingTime = 0.0f;
 float endingObjectRenderingTime = 0.0f;
 

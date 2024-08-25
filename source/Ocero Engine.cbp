@@ -84,6 +84,8 @@
 		<Unit filename="opengl/textures.h" />
 		<Unit filename="opengl/window_functions.cpp" />
 		<Unit filename="opengl/window_functions.h" />
+		<Unit filename="resources/data/dataCollection.cpp" />
+		<Unit filename="resources/data/dataCollection.h" />
 		<Unit filename="resources/heightmap.png" />
 		<Unit filename="resources/sounds/punch.wav" />
 		<Unit filename="resources/textures/GrassTiles.png" />

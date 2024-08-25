@@ -130,7 +130,7 @@ extern float averageFpsCollection[totalSeconds];
 extern float zCoordCollection[totalSeconds];
 extern float totalCalculationTimeCollection[totalSeconds];
 
-extern float gpuCalculationTimeCollection[totalSeconds];
+extern float objectRenderTimeCollection[totalSeconds];
 extern float beginningObjectRenderingTime;
 extern float endingObjectRenderingTime;
 

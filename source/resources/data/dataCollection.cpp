@@ -26,13 +26,16 @@ void createCsv()
     newFile <<
     "Seconds Elapsed" << "," << "Z Coordinate" << "," <<
     "FPS" << "," << "Average FPS" << "," << "CPU Time (ms)" << "," << "GPU Time (ms)" << "," <<
-    "Text Calculation (ms)" << "," << "Text Render (ms)" << "," <<
+    "3D Object Rendering (ms)" << "," <<
+    "Text Calculation (ms)" << "," << "Text Rendering (ms)" << "," <<
     "Trees Count" << "," <<
-    "Tree Calculation (ms)" << "," << "Tree Render (ms)" << "\n";
+    "Tree Calculation (ms)" << "," << "Tree Rendering (ms)" << "\n";
     for (int i = secondsOffset; i < totalSeconds; i++){ // i set to secondsOffset to ignore first few seconds.
+        const float totalGpuTime = objectRenderTimeCollection[i] + textRenderTimeCollection[i];
         newFile <<
         i - secondsOffset + 1 << "," << zCoordCollection[i] << "," <<
-        fpsCollection[i] << "," << averageFpsCollection[i] << "," << totalCalculationTimeCollection[i] - gpuCalculationTimeCollection[i] << "," << gpuCalculationTimeCollection[i] << "," <<
+        fpsCollection[i] << "," << averageFpsCollection[i] << "," << totalCalculationTimeCollection[i] - (totalGpuTime) << "," << totalGpuTime << "," <<
+        objectRenderTimeCollection[i] << "," <<
         textCalculationTimeCollection[i] << "," << textRenderTimeCollection[i] << "," <<
         totalTreeCountCollection[i] << "," <<
         treeCalculationTimeCollection[i] << "," << treeRenderTimeCollection[i] << '\n';
