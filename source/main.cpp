@@ -509,7 +509,7 @@ int main(){
 
             // CPU + GPU
             inputMilliseconds(currentFrame, currentTime, totalCalculationTimeCollection);
-            inputMilliseconds(beginningObjectRenderingTime, endingObjectRenderingTime, gpuCalculationTimeCollection);
+            inputMilliseconds(beginningObjectRenderingTime, endingObjectRenderingTime, objectRenderTimeCollection);
 
             // text
             inputMilliseconds(beginningTextCalculationTime, endingTextCalculationTime, textCalculationTimeCollection);
