@@ -54,9 +54,9 @@ void processMainMenu(GLFWwindow* window, Shader t, int &choice){
         outputText += std::string("\\  enable_vsync: ") + (ENABLE_VSYNC ? "true" : "false");
 
     if (choice == 4)
-        outputText += std::string("\\* disable_slow_mo: ") + (DISABLE_SLOW_MO ? "true" : "false");
+        outputText += std::string("\\* enable_data_collection: ") + (ENABLE_DATA_COLLECTION ? "true" : "false");
     else
-        outputText += std::string("\\  disable_slow_mo: ") + (DISABLE_SLOW_MO ? "true" : "false");
+        outputText += std::string("\\  enable_data_collection: ") + (ENABLE_DATA_COLLECTION ? "true" : "false");
 
     if (choice == 5)
         outputText += std::string("\\* enable_text: ") + (text ? "true" : "false");

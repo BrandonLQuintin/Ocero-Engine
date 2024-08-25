@@ -33,8 +33,9 @@ float VIEW_DISTANCE = 100.0f;
 float DESPAWN_DISTANCE = 60.0f;
 float FOG_DENSITY = 0.001f;
 float MOVEMENT_SPEED = 12.0f;
+bool ENABLE_DATA_COLLECTION = true;
 
-bool mainMenu = true;
+bool mainMenu = false;
 int menuChoice = 0;
 bool enterKeyPressed = false;
 
@@ -77,6 +78,7 @@ float timeSinceLastEnemyWait = 0.0f;
 float timeSinceLastEnemyThought = 0.0f;
 bool enemyFightingToggle = false;
 float timeSinceEnemyFightInit = 0.0f;
+float terrainCoordBelowCamera = 0.0f;
 bool enemyOffensiveMode = false;
 bool ENEMY_MOVMENT = true;
 
@@ -95,7 +97,33 @@ float pitch = 0.0f;
 std::vector<float> fpsVector;
 float timeSinceLastFPSCalculation = 0.0f;
 
-float terrainCoordBelowCamera = 0.0f;
+// data collection
+bool dataCollected = false;
+bool availableToInput = false;
+int currentSecondCounter = 0;
+float fpsCollection[totalSeconds];
+float averageFpsCollection[totalSeconds];
+float zCoordCollection[totalSeconds];
+float totalCalculationTimeCollection[totalSeconds];
+
+float gpuCalculationTimeCollection[totalSeconds];
+float beginningObjectRenderingTime = 0.0f;
+float endingObjectRenderingTime = 0.0f;
+
+float textCalculationTimeCollection[totalSeconds];
+float textRenderTimeCollection[totalSeconds];
+float beginningTextCalculationTime = 0.0f;
+float endingTextCalculationTime = 0.0f;
+float beginningTextRenderingTime = 0.0f;
+float endingTextRenderingTime = 0.0f;
+
+float totalTreeCountCollection[totalSeconds];
+float treeCalculationTimeCollection[totalSeconds];
+float treeRenderTimeCollection[totalSeconds];
+float beginningTreeCalculationTime = 0.0f;
+float endingTreeCalculationTime = 0.0f;
+float beginningTreeRenderTime = 0.0f;
+float endingTreeRenderTime = 0.0f;
 
 float randomInRange(float min, float max) {
     std::uniform_real_distribution<float> distribution(min, max);
