@@ -34,8 +34,8 @@ void createCsv()
         const float totalGpuTime = objectRenderTimeCollection[i] + textRenderTimeCollection[i];
         newFile <<
         i - secondsOffset + 1 << "," << zCoordCollection[i] << "," <<
-        fpsCollection[i] << "," << averageFpsCollection[i] << "," << totalCalculationTimeCollection[i] - (totalGpuTime) << "," << totalGpuTime << "," <<
-        objectRenderTimeCollection[i] << "," <<
+        fpsCollection[i] << "," << averageFpsCollection[i] << "," << (totalCalculationTimeCollection[i] - totalGpuTime) + treeCalculationTimeCollection[i] << "," << totalGpuTime - treeCalculationTimeCollection[i] << "," <<
+        objectRenderTimeCollection[i] - treeCalculationTimeCollection[i] << "," <<
         textCalculationTimeCollection[i] << "," << textRenderTimeCollection[i] << "," <<
         totalTreeCountCollection[i] << "," <<
         treeCalculationTimeCollection[i] << "," << treeRenderTimeCollection[i] << '\n';
