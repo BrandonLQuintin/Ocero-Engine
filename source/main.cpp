@@ -259,7 +259,7 @@ int main(){
         std::string animationText;
 
         // FOR GATHERING DATA (REMOVE LATER)
-        cameraPos += (1.0f * deltaTime) * cameraFront;
+        cameraPos.z += (-1.0f * deltaTime);
         terrainCoordBelowCamera = getHeight(cameraPos.x, cameraPos.z);
         const float collisionLimit = terrainCoordBelowCamera + 1.0f;
         if (cameraPos.y <= collisionLimit){
