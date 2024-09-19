@@ -61,6 +61,8 @@
 		<Unit filename="game/calculate_fps.h" />
 		<Unit filename="game/entity.cpp" />
 		<Unit filename="game/entity.h" />
+		<Unit filename="game/functions.cpp" />
+		<Unit filename="game/functions.h" />
 		<Unit filename="game/gameplay.cpp" />
 		<Unit filename="game/gameplay.h" />
 		<Unit filename="game/main_menu.cpp" />

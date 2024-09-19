@@ -31,10 +31,11 @@
 #include "opengl/shader_functions.h"
 #include "opengl/textures.h"
 #include "opengl/text_render.h"
-#include "game/entity.h"
 #include "game/calculate_fps.h"
-#include "game/main_menu.h"
+#include "game/entity.h"
+#include "game/functions.h"
 #include "game/gameplay.h"
+#include "game/main_menu.h"
 #include "shapes/terrain.h"
 #include "game/sound.h"
 #include "resources/data/dataCollection.h"
@@ -174,29 +175,6 @@ int main(){
     // 1 terrain
     shape terrains[1];
     int terrainsArraySize = sizeof(terrains) / sizeof(terrains[0]);
-
-    // 100 trees
-    tree treesArray[5000];
-    std::vector<tree> trees(std::begin(treesArray), std::end(treesArray));
-    std::vector<tree> activeTrees;
-
-
-    const float HALF_CHUNK_SIZE = CHUNK_SIZE / 2;
-    for (int i = 0; i < trees.size(); i++){
-        trees[i].modelMatrix[3][0] = cameraPos.x + randomInRange(-HALF_CHUNK_SIZE, HALF_CHUNK_SIZE);
-        trees[i].modelMatrix[3][2] = cameraPos.z + randomInRange(-HALF_CHUNK_SIZE, HALF_CHUNK_SIZE);
-        trees[i].modelMatrix[3][1] = getHeight(trees[i].modelMatrix[3][0], trees[i].modelMatrix[3][2]) + 2.3f;
-        trees[i].modelMatrix = glm::scale(trees[i].modelMatrix, glm::vec3(5.0f));
-    }
-    for (int i = 0; i < trees.size(); i++){
-        trees[i].cloneModelMatrix = trees[i].modelMatrix;
-    }
-    for (int i = 0; i < trees.size(); i++){
-        trees[i].cloneModelMatrix = glm::rotate(trees[i].cloneModelMatrix, glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-        trees[i].cloneModelMatrix[3][0] = trees[i].modelMatrix[3][0] + 0.55f;
-        trees[i].cloneModelMatrix[3][1] = trees[i].modelMatrix[3][1];
-        trees[i].cloneModelMatrix[3][2] = trees[i].modelMatrix[3][2] + 0.55f;
-    }
 
     // 2 boxes
     shape boxes[2];
@@ -423,6 +401,7 @@ int main(){
             }
         }
 
+
         // ### TREES
         phongShader.use();
         phongShader.setBool("isTree", true);
@@ -432,6 +411,69 @@ int main(){
         setTextureUV(phongShader, treeAtlasUV, false);
 
         if (availableToInput && ENABLE_DATA_COLLECTION) beginningTreeCalculationTime = glfwGetTime();
+        std::array<std::pair<int, int>, 9> renderingChunks;
+        std::pair<int, int> origin = getChunkCoordinates(cameraPos.x, cameraPos.z); // origin x & y chunk
+        // return list of chunks to render 3x3 chunks.
+        int arrCounter = 0;
+        for (int x = -1; x <= 1; x++){ // x
+            for (int z = -1; z <= 1; z++){
+                if (x == -1){
+                    renderingChunks[arrCounter].first = origin.first - 1;
+                }
+                else if (x == 0){
+                    renderingChunks[arrCounter].first = origin.first;
+                }
+                else{
+                    renderingChunks[arrCounter].first = origin.first + 1;
+                }
+
+                if (z == -1){
+                    renderingChunks[arrCounter].second = origin.second - 1;
+                }
+                else if (z == 0){
+                    renderingChunks[arrCounter].second = origin.second;
+                }
+                else{
+                    renderingChunks[arrCounter].second = origin.second + 1;
+                }
+
+                arrCounter += 1;
+            }
+        }
+
+        std::array<std::array<int, TREE_AMOUNT * 2>, 9> randomNums;
+        randomNums[4] = generateRandomConsistentNumbers(origin.first, origin.second);
+        std::array<std::array<int, TREE_AMOUNT>, 9> xOffset;
+        std::array<std::array<int, TREE_AMOUNT>, 9> zOffset;
+        for (int i = 0; i < TREE_AMOUNT * 2; i++) {
+            if (i % 2 == 0) {
+                xOffset[4][i / 2] = randomNums[4][i];
+            } else {
+                zOffset[4][i / 2] = randomNums[4][i];
+            }
+        }
+
+        tree treesArray[TREE_AMOUNT];
+        std::vector<tree> trees(std::begin(treesArray), std::end(treesArray));
+        std::vector<tree> activeTrees;
+
+        for (int i = 0; i < trees.size(); i++){
+            trees[i].modelMatrix[3][0] = (std::floor(origin.first) * SMALL_CHUNK_SIZE) + xOffset[4][i];
+            trees[i].modelMatrix[3][2] = (std::floor(origin.second) * SMALL_CHUNK_SIZE) + zOffset[4][i];
+
+            trees[i].modelMatrix[3][1] = getHeight(trees[i].modelMatrix[3][0], trees[i].modelMatrix[3][2]) + 2.3f;
+        }
+
+        for (int i = 0; i < trees.size(); i++){
+            trees[i].cloneModelMatrix = trees[i].modelMatrix;
+        }
+        for (int i = 0; i < trees.size(); i++){
+            trees[i].cloneModelMatrix = glm::rotate(trees[i].cloneModelMatrix, glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+            trees[i].cloneModelMatrix[3][0] = trees[i].modelMatrix[3][0] + 0.55f;
+            trees[i].cloneModelMatrix[3][1] = trees[i].modelMatrix[3][1];
+            trees[i].cloneModelMatrix[3][2] = trees[i].modelMatrix[3][2] + 0.55f;
+        }
+
         // uses binary search to insert in correct order instead of sorting every frame
         for (int i = 0; i < trees.size(); i++) { // Adds activeTrees based on distance (before rendering) so transparency occurs correctly.
             glm::vec3 treePosition = glm::vec3(trees[i].modelMatrix[3]);
@@ -494,6 +536,9 @@ int main(){
         }
         if (dataCollected){
             text += "\\data collected!";
+        }
+        for (int i = 0; i < 9; i++){
+            text += "\\" + std::to_string(i) + " " + std::to_string(renderingChunks[i].first) + " " + std::to_string(renderingChunks[i].second);
         }
         text += "\\" + std::to_string(currentFrame);
         text += "\\" + std::to_string(currentSecondCounter);

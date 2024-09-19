@@ -31,7 +31,7 @@ float normalizedScore = 0.0f;
 
 float VIEW_DISTANCE = 100.0f;
 float DESPAWN_DISTANCE = 60.0f;
-float FOG_DENSITY = 0.001f;
+float FOG_DENSITY = 0.000f;
 float MOVEMENT_SPEED = 12.0f;
 bool ENABLE_DATA_COLLECTION = true;
 
