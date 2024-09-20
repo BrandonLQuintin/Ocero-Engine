@@ -31,10 +31,11 @@
 #include "opengl/shader_functions.h"
 #include "opengl/textures.h"
 #include "opengl/text_render.h"
-#include "game/entity.h"
 #include "game/calculate_fps.h"
-#include "game/main_menu.h"
+#include "game/entity.h"
+#include "game/trees.h"
 #include "game/gameplay.h"
+#include "game/main_menu.h"
 #include "shapes/terrain.h"
 #include "game/sound.h"
 #include "resources/data/dataCollection.h"
@@ -174,29 +175,6 @@ int main(){
     // 1 terrain
     shape terrains[1];
     int terrainsArraySize = sizeof(terrains) / sizeof(terrains[0]);
-
-    // 100 trees
-    tree treesArray[5000];
-    std::vector<tree> trees(std::begin(treesArray), std::end(treesArray));
-    std::vector<tree> activeTrees;
-
-
-    const float HALF_CHUNK_SIZE = CHUNK_SIZE / 2;
-    for (int i = 0; i < trees.size(); i++){
-        trees[i].modelMatrix[3][0] = cameraPos.x + randomInRange(-HALF_CHUNK_SIZE, HALF_CHUNK_SIZE);
-        trees[i].modelMatrix[3][2] = cameraPos.z + randomInRange(-HALF_CHUNK_SIZE, HALF_CHUNK_SIZE);
-        trees[i].modelMatrix[3][1] = getHeight(trees[i].modelMatrix[3][0], trees[i].modelMatrix[3][2]) + 2.3f;
-        trees[i].modelMatrix = glm::scale(trees[i].modelMatrix, glm::vec3(5.0f));
-    }
-    for (int i = 0; i < trees.size(); i++){
-        trees[i].cloneModelMatrix = trees[i].modelMatrix;
-    }
-    for (int i = 0; i < trees.size(); i++){
-        trees[i].cloneModelMatrix = glm::rotate(trees[i].cloneModelMatrix, glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-        trees[i].cloneModelMatrix[3][0] = trees[i].modelMatrix[3][0] + 0.55f;
-        trees[i].cloneModelMatrix[3][1] = trees[i].modelMatrix[3][1];
-        trees[i].cloneModelMatrix[3][2] = trees[i].modelMatrix[3][2] + 0.55f;
-    }
 
     // 2 boxes
     shape boxes[2];
@@ -423,6 +401,7 @@ int main(){
             }
         }
 
+
         // ### TREES
         phongShader.use();
         phongShader.setBool("isTree", true);
@@ -432,25 +411,35 @@ int main(){
         setTextureUV(phongShader, treeAtlasUV, false);
 
         if (availableToInput && ENABLE_DATA_COLLECTION) beginningTreeCalculationTime = glfwGetTime();
-        // uses binary search to insert in correct order instead of sorting every frame
-        for (int i = 0; i < trees.size(); i++) { // Adds activeTrees based on distance (before rendering) so transparency occurs correctly.
-            glm::vec3 treePosition = glm::vec3(trees[i].modelMatrix[3]);
-            trees[i].distanceFromCamera = renderDistanceCheck(cameraPos, treePosition);
 
-            if (trees[i].distanceFromCamera < DESPAWN_DISTANCE) {
-                bool inserted = false;
-                for (std::vector<tree>::iterator it = activeTrees.begin(); it != activeTrees.end(); ++it) {
-                    if (trees[i].distanceFromCamera > it->distanceFromCamera) {
-                        activeTrees.insert(it, trees[i]);
-                        inserted = true;
-                        break;
+        // return list of chunks to render 3x3 chunks.
+        std::array<std::pair<int, int>, 9> renderingChunks;
+        std::pair<int, int> origin = getChunkCoordinates(cameraPos.x, cameraPos.z); // origin x & y chunk
+        generateSurroundingChunks(renderingChunks, origin);
+
+        initializeTreeLocations(renderingChunks);
+
+        // uses binary search to insert in correct order instead of sorting every frame
+        for (int x = 0; x < 9; x++){
+            for (int i = 0; i < trees.size(); i++) { // Adds activeTrees based on distance (before rendering) so transparency occurs correctly.
+                trees[x][i].distanceFromCamera = renderDistanceCheck(cameraPos, trees[x][i].modelMatrix[3]);
+
+                if (trees[x][i].distanceFromCamera < DESPAWN_DISTANCE) {
+                    bool inserted = false;
+                    for (std::vector<tree>::iterator it = activeTrees.begin(); it != activeTrees.end(); ++it) {
+                        if (trees[x][i].distanceFromCamera > it->distanceFromCamera) {
+                            activeTrees.insert(it, trees[x][i]);
+                            inserted = true;
+                            break;
+                        }
                     }
-                }
-                if (!inserted) {
-                    activeTrees.push_back(trees[i]);
+                    if (!inserted) {
+                        activeTrees.push_back(trees[x][i]);
+                    }
                 }
             }
         }
+
         if (availableToInput && ENABLE_DATA_COLLECTION){
             endingTreeCalculationTime = glfwGetTime();
             beginningTreeRenderTime = glfwGetTime();
