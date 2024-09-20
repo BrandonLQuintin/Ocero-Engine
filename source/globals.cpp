@@ -30,17 +30,15 @@ float health = 0.0f;
 float normalizedScore = 0.0f;
 
 float VIEW_DISTANCE = 100.0f;
-float DESPAWN_DISTANCE = 60.0f;
-float FOG_DENSITY = 0.000f;
+float DESPAWN_DISTANCE = 55.0f; // usually 60.0f
+float FOG_DENSITY = 0.001f; // usually 0.001f
 float MOVEMENT_SPEED = 12.0f;
-bool ENABLE_DATA_COLLECTION = true;
 
 bool mainMenu = false;
 int menuChoice = 0;
 bool enterKeyPressed = false;
 
 bool isRaining = true;
-float fov = 90;
 
 float deltaTime = 0.0f;
 float lastFrame = 0.0f;

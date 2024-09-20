@@ -37,15 +37,16 @@ extern bool HIGH_RENDER_DISTANCE;
 extern bool ENABLE_VSYNC;
 extern bool ENABLE_TEXT;
 extern bool ENABLE_SOUND;
-extern bool ENABLE_DATA_COLLECTION;
+
 extern bool SHOW_FPS;
 extern bool text;
 
 const float PI = 3.14159265358979323846f;
-const unsigned int POLY_RESOLUTION = 35;
+const bool ENABLE_DATA_COLLECTION = true;
 const unsigned int CHUNK_SIZE = 1000;
+const unsigned int POLY_RESOLUTION = 35;
 const unsigned int SMALL_CHUNK_SIZE = 50;
-const unsigned int TREE_AMOUNT = 20;
+const unsigned int TREE_AMOUNT = 8; // per chunk
 extern float VIEW_DISTANCE;
 extern float DESPAWN_DISTANCE;
 extern float FOG_DENSITY;
@@ -103,7 +104,7 @@ const unsigned int SCREEN_WIDTH = 1280;
 const unsigned int SCREEN_HEIGHT = 720;
 const float CAMERA_SPEED = 5.0f;
 const float CAMERA_ROTATE_SPEED = 150.0f;
-extern float fov;
+const float FOV = 90.0f;
 
 // timing
 extern float deltaTime;
