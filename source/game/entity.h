@@ -23,7 +23,7 @@ struct dustEntity {
     glm::mat4 modelMatrix = glm::mat4(1.0f);
     float timeSinceExistence = glfwGetTime();
 };
-
+extern uint32_t globalSeed;
 
 void setShadowLocation(shape &shape, glm::vec3 targetPos, float groundY);
 

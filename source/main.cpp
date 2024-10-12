@@ -303,10 +303,10 @@ int main(){
 
         if (availableToInput && ENABLE_DATA_COLLECTION) beginningObjectRenderingTime = glfwGetTime();
         // ### BOXES
+        phongShader.use();
+        glBindVertexArray(phongBoxVAO);
+        setTextureUV(phongShader, boxAtlasUV, false);
         for (int i = 0; i < boxesArraySize; i++){
-            phongShader.use();
-            glBindVertexArray(phongBoxVAO);
-            setTextureUV(phongShader, boxAtlasUV, false);
             if (i == 1){
                 setTextureUV(phongShader, oceroAtlasUV, false);
             }
@@ -426,16 +426,12 @@ int main(){
 
                 if (trees[x][i].distanceFromCamera < DESPAWN_DISTANCE) {
                     bool inserted = false;
-                    for (std::vector<tree>::iterator it = activeTrees.begin(); it != activeTrees.end(); ++it) {
-                        if (trees[x][i].distanceFromCamera > it->distanceFromCamera) {
-                            activeTrees.insert(it, trees[x][i]);
-                            inserted = true;
-                            break;
-                        }
-                    }
-                    if (!inserted) {
-                        activeTrees.push_back(trees[x][i]);
-                    }
+                    auto it = std::lower_bound(activeTrees.begin(), activeTrees.end(), trees[x][i],
+                        [](const tree& a, const tree& b) {
+                            return a.distanceFromCamera > b.distanceFromCamera;
+                        });
+                    activeTrees.insert(it, trees[x][i]);
+
                 }
             }
         }
