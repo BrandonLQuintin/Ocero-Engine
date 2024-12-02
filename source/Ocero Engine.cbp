@@ -20,7 +20,7 @@
 					<Add option="-static" />
 					<Add library="../GLFW/lib/libglfw3.a" />
 					<Add library="../GLFW/lib/libglfw3dll.a" />
-					<Add library="../../../../../../../../Windows/System32/opengl32.dll" />
+					<Add library="C:/Windows/System32/opengl32.dll" />
 					<Add library="gdi32" />
 					<Add library="sfml-audio-d" />
 					<Add library="sfml-system-d" />
@@ -41,7 +41,7 @@
 					<Add option="-static" />
 					<Add library="../GLFW/lib/libglfw3.a" />
 					<Add library="../GLFW/lib/libglfw3dll.a" />
-					<Add library="../../../../../../../../Windows/System32/opengl32.dll" />
+					<Add library="C:/Windows/System32/opengl32.dll" />
 					<Add library="gdi32" />
 					<Add library="sfml-audio" />
 					<Add library="sfml-system" />
