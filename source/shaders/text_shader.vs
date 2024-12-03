@@ -1,19 +1,19 @@
 #version 330 core
-layout (location = 0) in vec3 aPos;
-layout (location = 1) in vec2 aTexCoord;
+layout (location = 0) in vec2 aPos;        // Base quad vertices
+layout (location = 1) in vec2 aTexCoord;   // Base texture coordinates
+layout (location = 2) in vec4 aUVBounds;   // UV bounds (uStart, uEnd, vStart, vEnd)
+layout (location = 3) in vec2 aOffset;     // Character position offset
 
 out vec2 TexCoord;
 
-uniform float textXOffset;
-uniform float textYOffset;
-
 void main()
 {
-    vec4 textPosition = vec4(aPos, 1.0);
-    textPosition.x += -0.98f + textXOffset;
-    textPosition.y += 0.95f + textYOffset;
-
-    gl_Position = textPosition;
-
-    TexCoord = aTexCoord;
+    vec2 worldPos = aPos + aOffset;
+    gl_Position = vec4(worldPos, 0.0, 1.0);
+    
+    // Interpolate UV coordinates based on the UV bounds
+    TexCoord = vec2(
+        mix(aUVBounds.x, aUVBounds.y, aTexCoord.x),
+        mix(aUVBounds.z, aUVBounds.w, aTexCoord.y)
+    );
 }

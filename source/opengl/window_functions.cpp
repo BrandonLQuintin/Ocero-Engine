@@ -90,8 +90,6 @@ void processInput(GLFWwindow* window){
             else
                 buttonX = false;
 
-
-
             if (!prevButtonX && state.buttons[GLFW_GAMEPAD_BUTTON_X] == GLFW_PRESS){ // initialize fighting
                 if (!enemyFightingToggle && timeElapsed > 1.0f && CONTROLS_ENABLED) {
                     float playerToEnemyDistance = calculateDistance(glm::vec3(player[3][0], player[3][1], player[3][2]), glm::vec3(enemy[3][0], enemy[3][1], enemy[3][2]));
@@ -132,7 +130,6 @@ void processInput(GLFWwindow* window){
                 restartGame = true;
 
             prevButtonY = state.buttons[GLFW_GAMEPAD_BUTTON_X] == GLFW_PRESS;
-
 
             if (state.buttons[GLFW_GAMEPAD_BUTTON_DPAD_UP]) // gameplay
                 dPadUp = true;
@@ -178,7 +175,6 @@ void processInput(GLFWwindow* window){
                 enterKeyPressed = true;
             }
             prevButtonStart = state.buttons[GLFW_GAMEPAD_BUTTON_START] == GLFW_PRESS;
-
 
         if (!prevButtonSelect && state.buttons[GLFW_GAMEPAD_BUTTON_BACK] == GLFW_PRESS){
                 music.pause();
@@ -290,8 +286,6 @@ void processInput(GLFWwindow* window){
         if (!playerCurrentlyChargingUp && laserAttackCharge > 0.0f)
             laserAttackCharge -= deltaTime * 3.0f;
 
-
-
         if ((glfwGetKey(window, GLFW_KEY_K) == GLFW_PRESS || buttonX) && glfwGetKey(window, GLFW_KEY_L) == !GLFW_PRESS && !enemyFightingToggle && timeElapsed > 1.0f
             && (currentFrame - timeSinceInitializePlayerFightAnimation) < 5.0f && playerFightRangeInitializeCheck && !playerCurrentlyChargingUp){
             playerFightingToggle = true;
@@ -306,7 +300,6 @@ void processInput(GLFWwindow* window){
                 SLOW_MO = false;
             }
         }
-
 
         float adjustedDeltaTime = deltaTime;
         if (SLOW_MO){
@@ -378,7 +371,6 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
        restartGame = true;
     }
 
-
     if (key == GLFW_KEY_K && action == GLFW_RELEASE && !enemyFightingToggle && CONTROLS_ENABLED) {
         timeSinceLastInput = glfwGetTime();
     }
@@ -449,26 +441,38 @@ void framebufferSizeCallback(GLFWwindow* window, int width, int height){
 void fullscreen(GLFWwindow* window){
         GLFWmonitor* monitor = glfwGetPrimaryMonitor();
         const GLFWvidmode* mode = glfwGetVideoMode(monitor);
-
+        
+        // Store current VSync state
+        bool currentVSync = ENABLE_VSYNC;
+        
+        // Temporarily disable VSync during mode switch to prevent stutter
+        glfwSwapInterval(0);
+        
         if (glfwGetWindowMonitor(window) == nullptr){
-            glfwSetWindowMonitor(window, monitor, 0, 0, (*mode).width, (*mode).height, (*mode).refreshRate);
-            projection = glm::perspective(glm::radians(FOV), (float)(*mode).width / (float)(*mode).height, 0.1f, VIEW_DISTANCE);
-            glViewport(0, 0, (*mode).width, (*mode).height);
+            // Going fullscreen - use monitor's refresh rate
+            glfwSetWindowMonitor(window, monitor, 0, 0, mode->width, mode->height, mode->refreshRate);
+            projection = glm::perspective(glm::radians(FOV), (float)mode->width / (float)mode->height, 0.1f, VIEW_DISTANCE);
+            glViewport(0, 0, mode->width, mode->height);
         }
         else{
-            glfwSetWindowMonitor(window, nullptr, 100, 100, SCREEN_WIDTH, SCREEN_HEIGHT, GLFW_DONT_CARE);
+            // Going windowed - use monitor's refresh rate for consistency
+            glfwSetWindowMonitor(window, nullptr, 100, 100, SCREEN_WIDTH, SCREEN_HEIGHT, mode->refreshRate);
             projection = glm::perspective(glm::radians(FOV), (float)SCREEN_WIDTH / (float)SCREEN_HEIGHT, 0.1f, VIEW_DISTANCE);
             glViewport(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
         }
+        
+        // Wait for mode switch to complete
         while (glfwGetKey(window, GLFW_KEY_F11) == GLFW_PRESS){
             glfwPollEvents();
         }
-
-        if (!ENABLE_VSYNC){
-            glfwSwapInterval(0); // uncapped framerate
-        }
-        else
+        
+        // Restore VSync state
+        if (currentVSync){
             glfwSwapInterval(1);
+        }
+        else{
+            glfwSwapInterval(0);
+        }
 }
 
 void detectController(int joystickId) {

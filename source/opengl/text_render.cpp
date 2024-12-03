@@ -1,4 +1,5 @@
 #include "text_render.h"
+
 std::map<char, std::vector<float>> characterUV = {
     {'a', returnTextureUV(0, 0)},
     {'b', returnTextureUV(1, 0)},
@@ -93,38 +94,125 @@ std::map<int, std::string> textOptions = {
     {5, "\\\\\\\\\\                                       no way!"}
 };
 
+// Structure to hold character vertex data
+struct CharacterVertex {
+    float position[2];  // x, y position
+    float texCoords[2]; // u, v coordinates
+};
 
-void renderText(Shader shader, std::string input){
-        if (!ENABLE_TEXT)
-            return;
-        glDisable(GL_DEPTH_TEST);
-        shader.use();
-        glBindVertexArray(textVAO);
+// Structure to hold character instance data
+struct CharacterInstance {
+    float offset[2];    // Position offset
+    float uvBounds[4];  // UV bounds (uStart, uEnd, vStart, vEnd)
+};
 
-        float textXOffset = 0;
-        float textYOffset = 0;
+// Maximum number of characters in a batch
+const size_t MAX_BATCH_CHARACTERS = 1024;
+std::vector<CharacterVertex> baseQuad;
+std::vector<CharacterInstance> instanceData;
+GLuint quadVBO, instanceVBO;
 
-        // No error checking here!
+void initTextRendering() {
+    // Create base quad vertices
+    baseQuad = {
+        {{-0.013f,  0.035f}, {0.0f, 1.0f}},  // Top-left
+        {{ 0.013f,  0.035f}, {1.0f, 1.0f}},  // Top-right
+        {{-0.013f, -0.035f}, {0.0f, 0.0f}},  // Bottom-left
+        {{ 0.013f, -0.035f}, {1.0f, 0.0f}}   // Bottom-right
+    };
 
-        for (char c: input){
-            textXOffset += 0.023f;
-            if (textXOffset > 1.7f){
-                textXOffset = 0.023f;
-                textYOffset -= 0.1f;
+    // Create and setup VAO, VBOs
+    glBindVertexArray(textVAO);
+
+    // Setup quad VBO
+    glGenBuffers(1, &quadVBO);
+    glBindBuffer(GL_ARRAY_BUFFER, quadVBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(CharacterVertex) * baseQuad.size(), baseQuad.data(), GL_STATIC_DRAW);
+
+    // Position attribute
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(CharacterVertex), (void*)offsetof(CharacterVertex, position));
+
+    // Texture coordinate attribute
+    glEnableVertexAttribArray(1);
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(CharacterVertex), (void*)offsetof(CharacterVertex, texCoords));
+
+    // Setup instance VBO
+    glGenBuffers(1, &instanceVBO);
+    glBindBuffer(GL_ARRAY_BUFFER, instanceVBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(CharacterInstance) * MAX_BATCH_CHARACTERS, nullptr, GL_DYNAMIC_DRAW);
+
+    // Instance UV bounds attribute (4 floats)
+    glEnableVertexAttribArray(2);
+    glVertexAttribPointer(2, 4, GL_FLOAT, GL_FALSE, sizeof(CharacterInstance), (void*)offsetof(CharacterInstance, uvBounds));
+    glVertexAttribDivisor(2, 1);
+
+    // Instance position offset attribute
+    glEnableVertexAttribArray(3);
+    glVertexAttribPointer(3, 2, GL_FLOAT, GL_FALSE, sizeof(CharacterInstance), (void*)offsetof(CharacterInstance, offset));
+    glVertexAttribDivisor(3, 1);
+
+    instanceData.reserve(MAX_BATCH_CHARACTERS);
+}
+
+void renderText(Shader shader, std::string input) {
+    if (!ENABLE_TEXT)
+        return;
+
+    glDisable(GL_DEPTH_TEST);
+    shader.use();
+
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+    glBindVertexArray(textVAO);
+
+    float textXOffset = -0.98f;
+    float textYOffset = 0.95f;
+
+    instanceData.clear();
+
+    // Process all characters and prepare instance data
+    for (char c : input) {
+        if (c == '\\') {
+            textXOffset = -0.98f;
+            textYOffset -= 0.1f;
+            continue;
+        }
+
+        auto it = characterUV.find(c);
+        if (c != '\\' && it != characterUV.end()) {
+            const auto& uvCoords = it->second;
+            CharacterInstance instance;
+            instance.offset[0] = textXOffset;
+            instance.offset[1] = textYOffset;
+            // Copy all 4 UV coordinates
+            for (int i = 0; i < 4; i++) {
+                instance.uvBounds[i] = uvCoords[i];
             }
-            // then render actual text
-            if (c == '\\'){
-                textXOffset = 0.0f;
-                textYOffset -= 0.1f;
-            }
-            if (c != '\\'){
-                shader.setFloat("textXOffset", textXOffset);
-                shader.setFloat("textYOffset", textYOffset);
-                setTextureUV(shader, characterUV[c], true);
-                glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+            instanceData.push_back(instance);
+
+            float charWidth = 0.0115f;
+            textXOffset += charWidth * 1.8f;
+            if (textXOffset > 0.9f) {
+                textXOffset = -0.98f;
+                textYOffset -= 0.07f * 1.5f;
             }
         }
-        glEnable(GL_DEPTH_TEST);
+    }
+
+    if (!instanceData.empty()) {
+        // Update instance buffer with new data
+        glBindBuffer(GL_ARRAY_BUFFER, instanceVBO);
+        glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(CharacterInstance) * instanceData.size(), instanceData.data());
+
+        // Draw all characters in a single instanced draw call
+        glDrawArraysInstanced(GL_TRIANGLE_STRIP, 0, 4, instanceData.size());
+    }
+
+    // Restore OpenGL state
+    glDisable(GL_BLEND);
+    glEnable(GL_DEPTH_TEST);  // Re-enable depth testing for 3D objects
 }
 
 void newDialogue(){
