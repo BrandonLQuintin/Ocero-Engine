@@ -60,12 +60,14 @@ int main(){
 
     generatePlaneVertices(phongTerrainVector, phongTerrainIndicesVector);
     initializeAllShapes();
+    initTextRendering();  // Initialize text rendering after shapes are initialized
 
     // ----- TEXTURES -----
     unsigned int texture1, texture2, texture3;
     loadTexture(texture1, "resources/textures/TextureAtlas.png");
     loadTexture(texture2, "resources/textures/TextAtlas.png");
     loadTexture(texture3, "resources/textures/GrassTiles.png");
+
     billboardShader.use();
     billboardShader.setInt("texture1", 0);
     billboardShader.setInt("texture2", 1);
@@ -294,7 +296,6 @@ int main(){
         phongShader.setMat4("projection", projection);
         phongShader.setVec3("viewPos", cameraPos);
 
-
         // ----- EFFECTS ------
 
         // NO EFFECTS USED IN ENGINE (ONLY IN GAME)
@@ -512,8 +513,6 @@ int main(){
             // tree
             inputMilliseconds(beginningTreeCalculationTime, endingTreeCalculationTime, treeCalculationTimeCollection);
             inputMilliseconds(beginningTreeRenderTime, endingTreeRenderTime, treeRenderTimeCollection);
-
-
 
             availableToInput = false;
         }
