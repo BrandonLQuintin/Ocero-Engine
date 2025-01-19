@@ -59,6 +59,7 @@ GLFWwindow* createWindow(){
     }
 
     fullscreen(window);
+    fullscreen(window);
 
     return window;
 
@@ -441,13 +442,13 @@ void framebufferSizeCallback(GLFWwindow* window, int width, int height){
 void fullscreen(GLFWwindow* window){
         GLFWmonitor* monitor = glfwGetPrimaryMonitor();
         const GLFWvidmode* mode = glfwGetVideoMode(monitor);
-        
+
         // Store current VSync state
         bool currentVSync = ENABLE_VSYNC;
-        
+
         // Temporarily disable VSync during mode switch to prevent stutter
         glfwSwapInterval(0);
-        
+
         if (glfwGetWindowMonitor(window) == nullptr){
             // Going fullscreen - use monitor's refresh rate
             glfwSetWindowMonitor(window, monitor, 0, 0, mode->width, mode->height, mode->refreshRate);
@@ -460,12 +461,12 @@ void fullscreen(GLFWwindow* window){
             projection = glm::perspective(glm::radians(FOV), (float)SCREEN_WIDTH / (float)SCREEN_HEIGHT, 0.1f, VIEW_DISTANCE);
             glViewport(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
         }
-        
+
         // Wait for mode switch to complete
         while (glfwGetKey(window, GLFW_KEY_F11) == GLFW_PRESS){
             glfwPollEvents();
         }
-        
+
         // Restore VSync state
         if (currentVSync){
             glfwSwapInterval(1);
