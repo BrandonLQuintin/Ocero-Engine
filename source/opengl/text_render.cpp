@@ -180,7 +180,7 @@ void renderText(Shader shader, std::string input) {
             continue;
         }
 
-        auto it = characterUV.find(c);
+        auto it = characterUV.find(c) != characterUV.end() ? characterUV.find(c) : characterUV.find('*');
         if (c != '\\' && it != characterUV.end()) {
             const auto& uvCoords = it->second;
             CharacterInstance instance;
