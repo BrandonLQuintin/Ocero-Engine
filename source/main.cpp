@@ -22,6 +22,7 @@
 
 // REST API for ollama
 #include <curl/curl.h>
+#include "llm/llm_functions.h"
 
 // variables (may also contain functions)
 #include "globals.h"
@@ -44,6 +45,9 @@
 #include "resources/data/dataCollection.h"
 
 int main(){
+    std::string output = sendOllamaRequest("llama3.1:latest", "Hello, World!");
+    std::cout << output << std::endl;
+
     GLFWwindow* window = createWindow();
     glEnable(GL_DEPTH_TEST);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -239,6 +243,7 @@ int main(){
 
     // ----- MAIN PROGRAM -----
     while (!glfwWindowShouldClose(window)){
+
         std::string animationText;
 
         // FOR GATHERING DATA (REMOVE LATER)
