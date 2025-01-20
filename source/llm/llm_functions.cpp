@@ -59,7 +59,7 @@ std::string sendOllamaRequest(const std::string& model, const std::string& promp
     std::transform(response.begin(), response.end(), response.begin(),
                    [](unsigned char c) { return std::tolower(c); });
 
-    response = "\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\" + response;
+    response = "\\\\\\\\\\\\\\\\\\\\\\\\\\" + response;
 
     return response;
 }

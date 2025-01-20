@@ -42,7 +42,7 @@ extern bool SHOW_FPS;
 extern bool text;
 
 const float PI = 3.14159265358979323846f;
-const bool ENABLE_DATA_COLLECTION = true;
+const bool ENABLE_DATA_COLLECTION = false;
 const unsigned int CHUNK_SIZE = 1000;
 const unsigned int POLY_RESOLUTION = 35;
 const unsigned int SMALL_CHUNK_SIZE = 50;
@@ -152,5 +152,9 @@ extern float endingTreeCalculationTime;
 extern float beginningTreeRenderTime;
 extern float endingTreeRenderTime;
 
-
+// llm
+const std::string OCERO_OLLAMA_MODEL = "llama3.1:latest";
+extern bool enable_text_mode;
+extern std::string textInputBuffer;
+extern std::string llmOutput;
 

@@ -34,7 +34,7 @@ float DESPAWN_DISTANCE = 55.0f; // usually 60.0f
 float FOG_DENSITY = 0.001f; // usually 0.001f
 float MOVEMENT_SPEED = 12.0f;
 
-bool mainMenu = false;
+bool mainMenu = true;
 int menuChoice = 0;
 bool enterKeyPressed = false;
 
@@ -122,6 +122,10 @@ float beginningTreeCalculationTime = 0.0f;
 float endingTreeCalculationTime = 0.0f;
 float beginningTreeRenderTime = 0.0f;
 float endingTreeRenderTime = 0.0f;
+
+bool enable_text_mode = false;
+std::string textInputBuffer;
+std::string llmOutput;
 
 float randomInRange(float min, float max) {
     std::uniform_real_distribution<float> distribution(min, max);

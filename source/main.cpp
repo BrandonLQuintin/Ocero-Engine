@@ -238,12 +238,12 @@ int main(){
         billboardShader.setFloat("fogDensity", FOG_DENSITY);
     }
     int i = 0;
-    std::string llmOutput;
+
     // ----- MAIN PROGRAM -----
     while (!glfwWindowShouldClose(window)){
 
         if (i == 0){
-            llmOutput = sendOllamaRequest("llama3.1:latest", "Hello, World!");
+
             i++;
         }
 
@@ -280,7 +280,7 @@ int main(){
 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        if (!FREECAM_CONTROLS_ENABLED){
+        if (!FREECAM_CONTROLS_ENABLED && !enable_text_mode){
             cameraFront = glm::normalize(glm::vec3(player[3][0], player[3][1], player[3][2]) - cameraPos);
             view = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
         }
@@ -466,6 +466,7 @@ int main(){
 
         renderText(t, text);
         renderText(t, animationText);
+        renderText(t, "\\\\\\\\\\\\\\\\" + textInputBuffer);
         renderText(t, llmOutput);
 
         // end of a frame
