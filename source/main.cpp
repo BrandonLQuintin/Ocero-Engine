@@ -250,22 +250,9 @@ int main(){
 
         std::string animationText;
 
-        // FOR GATHERING DATA (REMOVE LATER)
-        cameraPos.z += (-1.0f * deltaTime);
-        terrainCoordBelowCamera = getHeight(cameraPos.x, cameraPos.z);
-        const float collisionLimit = terrainCoordBelowCamera + 1.0f;
-        if (cameraPos.y <= collisionLimit){
-                cameraPos.y = collisionLimit;
-        }
-
-
         float currentFrame = glfwGetTime();
         deltaTime = currentFrame - lastFrame;
         lastFrame = currentFrame;
-
-        if (ENABLE_DATA_COLLECTION){
-            dataInputChecker(currentFrame);
-        }
 
         while (mainMenu){
             if (glfwJoystickPresent(GLFW_JOYSTICK_2)) {
@@ -314,7 +301,6 @@ int main(){
 
         // ----- OBJECTS ------
 
-        if (availableToInput && ENABLE_DATA_COLLECTION) beginningObjectRenderingTime = glfwGetTime();
         // ### BOXES
         phongShader.use();
         glBindVertexArray(phongBoxVAO);
@@ -423,8 +409,6 @@ int main(){
         glBindVertexArray(phongBillboardVAO);
         setTextureUV(phongShader, treeAtlasUV, false);
 
-        if (availableToInput && ENABLE_DATA_COLLECTION) beginningTreeCalculationTime = glfwGetTime();
-
         // return list of chunks to render 3x3 chunks.
         std::array<std::pair<int, int>, 9> renderingChunks;
         std::pair<int, int> origin = getChunkCoordinates(cameraPos.x, cameraPos.z); // origin x & y chunk
@@ -449,10 +433,6 @@ int main(){
             }
         }
 
-        if (availableToInput && ENABLE_DATA_COLLECTION){
-            endingTreeCalculationTime = glfwGetTime();
-            beginningTreeRenderTime = glfwGetTime();
-        }
         for (int i = 0; i < activeTrees.size(); i++) {
             if (activeTrees[i].distanceFromCamera < 5.0f){
                 phongShader.setBool("isTransparent", true);
@@ -469,71 +449,30 @@ int main(){
                 glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
             }
         }
-        if (availableToInput && ENABLE_DATA_COLLECTION) totalTreeCountCollection[currentSecondCounter] = activeTrees.size();
         activeTrees.clear();
         phongShader.setBool("isTree", false);
-
-        if (availableToInput && ENABLE_DATA_COLLECTION){
-            endingTreeRenderTime = glfwGetTime();
-            endingObjectRenderingTime = glfwGetTime();
-        }
 
         glDisable(GL_BLEND);
         int fps = calculateAverageFPS(timeSinceLastFPSCalculation, deltaTime, fpsVector, SLOW_MO);
 
         // ----- DRAW TEXT ------
 
-        if (availableToInput && ENABLE_DATA_COLLECTION) beginningTextCalculationTime = glfwGetTime();
         std::string text;
         if (SHOW_FPS)
-            text += "\\" + std::to_string(fps) + " fps";
+            text += std::to_string(fps) + " fps";
         if (FREECAM_CONTROLS_ENABLED){
             text += "\\camera coordinates: [" + std::to_string(cameraPos.x) + ", "+ std::to_string(cameraPos.y) + ", " + std::to_string(cameraPos.z) + "]";
         }
-        if (dataCollected){
-            text += "\\data collected!";
-        }
-        text += "\\" + std::to_string(currentFrame);
-        text += "\\" + std::to_string(currentSecondCounter);
-        if (availableToInput && ENABLE_DATA_COLLECTION) endingTextCalculationTime = glfwGetTime();
 
-        if (availableToInput && ENABLE_DATA_COLLECTION) beginningTextRenderingTime = glfwGetTime();
         renderText(t, text);
         renderText(t, animationText);
         renderText(t, llmOutput);
-        if (availableToInput && ENABLE_DATA_COLLECTION) endingTextRenderingTime = glfwGetTime();
 
         // end of a frame
 
         glfwSwapBuffers(window);
         glfwPollEvents();
 
-        // data collection
-        if (availableToInput && ENABLE_DATA_COLLECTION){
-            const float currentTime = glfwGetTime();
-            fpsCollection[currentSecondCounter] = static_cast<int>(1 / (currentTime - lastFrame));
-            averageFpsCollection[currentSecondCounter] = fps;
-            zCoordCollection[currentSecondCounter] = cameraPos.z;
-
-            // CPU + GPU
-            inputMilliseconds(currentFrame, currentTime, totalCalculationTimeCollection);
-            inputMilliseconds(beginningObjectRenderingTime, endingObjectRenderingTime, objectRenderTimeCollection);
-
-            // text
-            inputMilliseconds(beginningTextCalculationTime, endingTextCalculationTime, textCalculationTimeCollection);
-            inputMilliseconds(beginningTextRenderingTime, endingTextRenderingTime, textRenderTimeCollection);
-
-            // tree
-            inputMilliseconds(beginningTreeCalculationTime, endingTreeCalculationTime, treeCalculationTimeCollection);
-            inputMilliseconds(beginningTreeRenderTime, endingTreeRenderTime, treeRenderTimeCollection);
-
-            availableToInput = false;
-        }
-
-        if (ENABLE_DATA_COLLECTION && !dataCollected && currentSecondCounter == totalSeconds - 1){
-            dataCollected = true;
-            createCsv();
-        }
     }
     glfwTerminate();
     return 0;
