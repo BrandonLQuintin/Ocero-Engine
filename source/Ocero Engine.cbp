@@ -78,6 +78,8 @@
 		</Unit>
 		<Unit filename="globals.cpp" />
 		<Unit filename="globals.h" />
+		<Unit filename="llm/llm_functions.cpp" />
+		<Unit filename="llm/llm_functions.h" />
 		<Unit filename="main.cpp" />
 		<Unit filename="opengl/camera_variables.cpp" />
 		<Unit filename="opengl/camera_variables.h" />
