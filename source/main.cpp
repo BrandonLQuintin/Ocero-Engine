@@ -45,9 +45,6 @@
 #include "resources/data/dataCollection.h"
 
 int main(){
-    std::string output = sendOllamaRequest("llama3.1:latest", "Hello, World!");
-    std::cout << output << std::endl;
-
     GLFWwindow* window = createWindow();
     glEnable(GL_DEPTH_TEST);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -240,9 +237,16 @@ int main(){
         billboardShader.setBool("isRaining", true);
         billboardShader.setFloat("fogDensity", FOG_DENSITY);
     }
-
+    int i = 0;
+    std::string llmOutput;
     // ----- MAIN PROGRAM -----
     while (!glfwWindowShouldClose(window)){
+
+        if (i == 0){
+            llmOutput = sendOllamaRequest("llama3.1:latest", "Hello, World!");
+            i++;
+        }
+
 
         std::string animationText;
 
@@ -496,6 +500,7 @@ int main(){
         if (availableToInput && ENABLE_DATA_COLLECTION) beginningTextRenderingTime = glfwGetTime();
         renderText(t, text);
         renderText(t, animationText);
+        renderText(t, llmOutput);
         if (availableToInput && ENABLE_DATA_COLLECTION) endingTextRenderingTime = glfwGetTime();
 
         // end of a frame

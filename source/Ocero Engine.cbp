@@ -53,6 +53,7 @@
 			<Add option="-Wall" />
 			<Add directory="../Include/SFML/include" />
 			<Add directory="../Include/curl-8.11.1_3-win64-mingw/include" />
+			<Add directory="../Include/nlohmann" />
 		</Compiler>
 		<Linker>
 			<Add option="-static" />

@@ -1,5 +1,7 @@
 #pragma once
 
+#include <cctype> // used for lowercase
+#include <json.hpp>
 #include <iostream>
 #include <string>
 #include <curl/curl.h>

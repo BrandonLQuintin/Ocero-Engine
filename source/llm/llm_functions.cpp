@@ -52,5 +52,14 @@ std::string sendOllamaRequest(const std::string& model, const std::string& promp
         std::cerr << "Failed to initialize CURL" << std::endl;
     }
 
+    nlohmann::json jsonData = nlohmann::json::parse(response);
+
+    response = jsonData["response"];
+
+    std::transform(response.begin(), response.end(), response.begin(),
+                   [](unsigned char c) { return std::tolower(c); });
+
+    response = "\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\" + response;
+
     return response;
 }
