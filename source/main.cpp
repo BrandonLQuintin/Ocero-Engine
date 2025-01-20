@@ -20,6 +20,9 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtx/string_cast.hpp>
 
+// REST API for ollama
+#include <curl/curl.h>
+
 // variables (may also contain functions)
 #include "globals.h"
 #include "opengl/camera_variables.h"
