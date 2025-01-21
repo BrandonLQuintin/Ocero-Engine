@@ -466,7 +466,9 @@ int main(){
 
         renderText(t, text);
         renderText(t, animationText);
-        renderText(t, "\\\\\\\\\\\\\\\\" + textInputBuffer);
+        if (textInputBuffer != ""){
+                renderText(t, "\\\\\\\\\\\\\\\\> " + textInputBuffer);
+        }
         renderText(t, llmOutput);
 
         // end of a frame
