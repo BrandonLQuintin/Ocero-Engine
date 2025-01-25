@@ -38,11 +38,30 @@ std::string sendOllamaRequest(const std::string& model, const std::string& promp
         curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
         curl_easy_setopt(curl, CURLOPT_WRITEDATA, &response);
 
+        // Set a timeout for the request
+        curl_easy_setopt(curl, CURLOPT_TIMEOUT, 10L);
+
         // Perform the request
         res = curl_easy_perform(curl);
         if (res != CURLE_OK) {
-            std::cerr << "curl_easy_perform() failed: " << curl_easy_strerror(res) << std::endl;
+            if (res == CURLE_COULDNT_CONNECT) {
+                std::cerr << "Failed to connect to Ollama server. Is it running on localhost:11434?" << std::endl;
+            } else {
+                std::cerr << "curl_easy_perform() failed: " << curl_easy_strerror(res) << std::endl;
+            }
             response = ""; // Clear the response in case of an error
+        } else {
+            // Parse the response
+            try {
+                nlohmann::json jsonData = nlohmann::json::parse(response);
+                response = jsonData["response"];
+                std::transform(response.begin(), response.end(), response.begin(),
+                               [](unsigned char c) { return std::tolower(c); });
+                response = "\\\\\\\\\\\\\\\\\\\\\\\\\\" + response;
+            } catch (const std::exception& e) {
+                std::cerr << "Failed to parse JSON response: " << e.what() << std::endl;
+                response = ""; // Clear the response in case of parsing error
+            }
         }
 
         // Clean up
@@ -51,17 +70,6 @@ std::string sendOllamaRequest(const std::string& model, const std::string& promp
     } else {
         std::cerr << "Failed to initialize CURL" << std::endl;
     }
-
-    std::cout << response << std::endl;
-
-    nlohmann::json jsonData = nlohmann::json::parse(response);
-
-    response = jsonData["response"];
-
-    std::transform(response.begin(), response.end(), response.begin(),
-                   [](unsigned char c) { return std::tolower(c); });
-
-    response = "\\\\\\\\\\\\\\\\\\\\\\\\\\" + response;
 
     return response;
 }
