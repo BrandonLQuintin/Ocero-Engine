@@ -73,3 +73,50 @@ std::string sendOllamaRequest(const std::string& model, const std::string& promp
 
     return response;
 }
+
+
+std::string sendPythonRequest(const std::string& prompt) {
+    const std::string url = "http://localhost:5000/chat";
+
+    std::string jsonPayload = R"({
+        "prompt": ")" + prompt + R"("
+    })";
+
+    CURL* curl;
+    CURLcode res;
+    std::string response;
+
+    curl = curl_easy_init();
+    if (curl) {
+        curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
+        curl_easy_setopt(curl, CURLOPT_POSTFIELDS, jsonPayload.c_str());
+
+        struct curl_slist* headers = NULL;
+        headers = curl_slist_append(headers, "Content-Type: application/json");
+        curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
+
+        curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
+        curl_easy_setopt(curl, CURLOPT_WRITEDATA, &response);
+        curl_easy_setopt(curl, CURLOPT_TIMEOUT, 10L);
+
+        res = curl_easy_perform(curl);
+        if (res != CURLE_OK) {
+            std::cerr << "curl_easy_perform() failed: " << curl_easy_strerror(res) << std::endl;
+        }
+        curl_easy_cleanup(curl);
+        curl_slist_free_all(headers);
+
+        try {
+            nlohmann::json jsonData = nlohmann::json::parse(response);
+            response = jsonData["response"];
+            std::transform(response.begin(), response.end(), response.begin(),
+                            [](unsigned char c) { return std::tolower(c); });
+            response = "\\\\\\\\\\\\\\\\\\\\\\\\\\" + response;
+        } catch (const std::exception& e) {
+            std::cerr << "Failed to parse JSON response: " << e.what() << std::endl;
+            response = ""; // Clear the response in case of parsing error
+        }
+    }
+
+    return response;
+}
