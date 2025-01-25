@@ -75,7 +75,8 @@ std::string sendOllamaRequest(const std::string& model, const std::string& promp
 }
 
 
-std::string sendPythonRequest(const std::string& prompt) {
+void sendPythonRequest(const std::string& prompt) {
+    llmOutput = "\\\\\\\\\\\\\\\\\\\\\\\\\\...";
     const std::string url = "http://localhost:5000/chat";
 
     std::string jsonPayload = R"({
@@ -110,17 +111,23 @@ std::string sendPythonRequest(const std::string& prompt) {
             nlohmann::json jsonData = nlohmann::json::parse(response);
             response = jsonData["response"];
             std::transform(response.begin(), response.end(), response.begin(),
-                            [](unsigned char c) { return std::tolower(c); });
+                           [](unsigned char c) { return std::tolower(c); });
             response = "\\\\\\\\\\\\\\\\\\\\\\\\\\" + response;
         } catch (const std::exception& e) {
             std::cerr << "Failed to parse JSON response: " << e.what() << std::endl;
             response = "\\\\\\\\\\\\\\\\\\\\\\\\\\cannot connect to ollama, please download and run ollama from ollama.com";
         }
     }
-    const size_t maxLength = 300;
+    const size_t maxLength = 750;
     if (response.length() > maxLength) {
         response = response.substr(0, maxLength); // Get only the first maxLength characters
-        std::cout << response << std::endl;
     }
-    return response;
+
+    llmOutput = response;
+}
+
+// Function to wrap threading
+void runRequestInThread(const std::string& prompt) {
+    std::thread requestThread(sendPythonRequest, prompt);
+    requestThread.detach(); // Detach the thread to run independently
 }

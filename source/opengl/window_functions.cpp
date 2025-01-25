@@ -348,8 +348,10 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
             enable_text_mode = false;
             CONTROLS_ENABLED = true;
             FREECAM_CONTROLS_ENABLED = true;
-            //llmOutput = sendOllamaRequest(OCERO_OLLAMA_MODEL, textInputBuffer);
-            llmOutput = sendPythonRequest(textInputBuffer);
+            if (textInputBuffer == ""){
+                return;
+            }
+            runRequestInThread(textInputBuffer); // sets te global llmOutput string when done.
             textInputBuffer = "";
         } else if (key == GLFW_KEY_SPACE) {
             textInputBuffer += ' ';
