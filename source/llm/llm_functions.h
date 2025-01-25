@@ -5,6 +5,7 @@
 #include <iostream>
 #include <string>
 #include <curl/curl.h>
+#include <future>
 
 
 size_t WriteCallback(void* contents, size_t size, size_t nmemb, std::string* response);

@@ -59,8 +59,8 @@ std::string sendOllamaRequest(const std::string& model, const std::string& promp
                                [](unsigned char c) { return std::tolower(c); });
                 response = "\\\\\\\\\\\\\\\\\\\\\\\\\\" + response;
             } catch (const std::exception& e) {
+                response = "\\\\\\\\\\\\\\\\\\\\\\\\\\cannot connect to ollama, please download and run ollama from ollama.com";
                 std::cerr << "Failed to parse JSON response: " << e.what() << std::endl;
-                response = ""; // Clear the response in case of parsing error
             }
         }
 
@@ -114,9 +114,13 @@ std::string sendPythonRequest(const std::string& prompt) {
             response = "\\\\\\\\\\\\\\\\\\\\\\\\\\" + response;
         } catch (const std::exception& e) {
             std::cerr << "Failed to parse JSON response: " << e.what() << std::endl;
-            response = ""; // Clear the response in case of parsing error
+            response = "\\\\\\\\\\\\\\\\\\\\\\\\\\cannot connect to ollama, please download and run ollama from ollama.com";
         }
     }
-
+    const size_t maxLength = 300;
+    if (response.length() > maxLength) {
+        response = response.substr(0, maxLength); // Get only the first maxLength characters
+        std::cout << response << std::endl;
+    }
     return response;
 }
