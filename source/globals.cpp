@@ -126,6 +126,7 @@ float endingTreeRenderTime = 0.0f;
 bool enable_text_mode = false;
 std::string textInputBuffer;
 std::string llmOutput;
+std::string LLMfunctionSelection;
 
 float randomInRange(float min, float max) {
     std::uniform_real_distribution<float> distribution(min, max);

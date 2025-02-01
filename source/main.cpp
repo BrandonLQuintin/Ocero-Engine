@@ -469,6 +469,7 @@ int main(){
         if (textInputBuffer != ""){
                 renderText(t, "\\\\\\\\\\\\\\\\> " + textInputBuffer);
         }
+        renderText(t, LLMfunctionSelection);
         renderText(t, llmOutput);
 
         // end of a frame

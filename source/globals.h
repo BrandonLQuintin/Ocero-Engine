@@ -157,4 +157,5 @@ const std::string OCERO_OLLAMA_MODEL = "llama3.1:latest";
 extern bool enable_text_mode;
 extern std::string textInputBuffer;
 extern std::string llmOutput;
+extern std::string LLMfunctionSelection;
 
