@@ -44,6 +44,14 @@
                 "kind": "build",
                 "isDefault": true
             }
+        },
+        {
+            "label": "Build & Run: Debug",
+            "group": {
+                "kind": "test",
+                "isDefault": true
+            },
+            "dependsOn": ["C/C++: g++.exe build active file"]
         }
     ]
 }
