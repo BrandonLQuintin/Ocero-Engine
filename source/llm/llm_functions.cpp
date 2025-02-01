@@ -86,6 +86,7 @@ void sendPythonRequest(const std::string& prompt) {
     CURL* curl;
     CURLcode res;
     std::string response;
+    std::string ollamaFunctionSelection;
 
     curl = curl_easy_init();
     if (curl) {
@@ -98,7 +99,7 @@ void sendPythonRequest(const std::string& prompt) {
 
         curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
         curl_easy_setopt(curl, CURLOPT_WRITEDATA, &response);
-        curl_easy_setopt(curl, CURLOPT_TIMEOUT, 10L);
+        curl_easy_setopt(curl, CURLOPT_TIMEOUT, 0L);
 
         res = curl_easy_perform(curl);
         if (res != CURLE_OK) {
@@ -113,9 +114,19 @@ void sendPythonRequest(const std::string& prompt) {
             std::transform(response.begin(), response.end(), response.begin(),
                            [](unsigned char c) { return std::tolower(c); });
             response = "\\\\\\\\\\\\\\\\\\\\\\\\\\" + response;
+
+            ollamaFunctionSelection = jsonData["tool_selection"];
+            std::cout << ollamaFunctionSelection << std::endl;
+
+            if (ollamaFunctionSelection == "spawn_lightning"){
+                LLMfunctionSelection = "\\\\\\\\\\tool selected: spawn_lightning";
+            }
+            else{
+                 LLMfunctionSelection = "";
+            }
         } catch (const std::exception& e) {
             std::cerr << "Failed to parse JSON response: " << e.what() << std::endl;
-            response = "\\\\\\\\\\\\\\\\\\\\\\\\\\cannot connect to ollama, please download and run ollama from ollama.com";
+            response = "\\\\\\\\\\\\\\\\\\\\\\\\\\error giving response, try again. or please download and run ollama from ollama.com";
         }
     }
     const size_t maxLength = 750;
