@@ -1,0 +1,49 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "type": "cppbuild",
+            "label": "C/C++: g++.exe build active file",
+            "command": "g++",
+            "args": [
+                "-g",
+                "-O3",
+                "-Wall",
+                "${workspaceFolder}\\source\\*.cpp",
+                "${workspaceFolder}\\source\\game\\*.cpp",
+                "${workspaceFolder}\\source\\llm\\*.cpp",
+                "${workspaceFolder}\\source\\opengl\\*.cpp",
+                "${workspaceFolder}\\source\\resources\\data\\*.cpp",
+                "${workspaceFolder}\\source\\shapes\\*.cpp",
+                "${workspaceFolder}\\source\\glad.c",
+                "-o",
+                "${workspaceFolder}\\bin\\Debug\\OceroEngine.exe",
+                "-I${workspaceFolder}\\Include\\GLFW\\include",
+                "-I${workspaceFolder}\\Include\\SFML\\include",
+                "-I${workspaceFolder}\\Include\\curl-8.11.1_3-win64-mingw\\include",
+                "-I${workspaceFolder}\\Include\\nlohmann",
+                "-L${workspaceFolder}\\Include\\GLFW\\lib",
+                "-L${workspaceFolder}\\Include\\SFML\\lib",
+                "-L${workspaceFolder}\\Include\\curl-8.11.1_3-win64-mingw\\lib",
+                "-lglfw3",
+                "-lglfw3dll",
+                "-lopengl32",
+                "-lgdi32",
+                "-lsfml-audio-d",
+                "-lsfml-system-d",
+                "-lcurl.dll",
+                "-static"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "problemMatcher": [
+                "$gcc"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        }
+    ]
+}
