@@ -217,11 +217,15 @@ void processInput(GLFWwindow* window){
                 }
         }
 
+        const float BORDER_EDGE = 400.0f;
+
         if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS){
             cameraPos += cameraSpeed * cameraFront;
             if (cameraPos.y <= collisionLimit){
                 cameraPos.y = collisionLimit;
             }
+            cameraPos.x = (cameraPos.x > BORDER_EDGE) ? BORDER_EDGE : (cameraPos.x < -BORDER_EDGE ? -BORDER_EDGE : cameraPos.x);
+            cameraPos.z = (cameraPos.z > BORDER_EDGE) ? BORDER_EDGE : (cameraPos.z < -BORDER_EDGE ? -BORDER_EDGE : cameraPos.z);
 
         }
         if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS){
@@ -229,6 +233,9 @@ void processInput(GLFWwindow* window){
             if (cameraPos.y <= collisionLimit){
                 cameraPos.y = collisionLimit;
             }
+            cameraPos.x = (cameraPos.x > BORDER_EDGE) ? BORDER_EDGE : (cameraPos.x < -BORDER_EDGE ? -BORDER_EDGE : cameraPos.x);
+            cameraPos.z = (cameraPos.z > BORDER_EDGE) ? BORDER_EDGE : (cameraPos.z < -BORDER_EDGE ? -BORDER_EDGE : cameraPos.z);
+
 
         }
         if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS){
@@ -236,12 +243,18 @@ void processInput(GLFWwindow* window){
             if (cameraPos.y <= collisionLimit){
                 cameraPos.y = (collisionLimit);
             }
+            cameraPos.x = (cameraPos.x > BORDER_EDGE) ? BORDER_EDGE : (cameraPos.x < -BORDER_EDGE ? -BORDER_EDGE : cameraPos.x);
+            cameraPos.z = (cameraPos.z > BORDER_EDGE) ? BORDER_EDGE : (cameraPos.z < -BORDER_EDGE ? -BORDER_EDGE : cameraPos.z);
+
         }
         if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS){
             cameraPos += glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
             if (cameraPos.y <= collisionLimit){
                 cameraPos.y = (collisionLimit);
             }
+            cameraPos.x = (cameraPos.x > BORDER_EDGE) ? BORDER_EDGE : (cameraPos.x < -BORDER_EDGE ? -BORDER_EDGE : cameraPos.x);
+            cameraPos.z = (cameraPos.z > BORDER_EDGE) ? BORDER_EDGE : (cameraPos.z < -BORDER_EDGE ? -BORDER_EDGE : cameraPos.z);
+
         }
 
         if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
