@@ -217,11 +217,15 @@ void processInput(GLFWwindow* window){
                 }
         }
 
+        const float BORDER_EDGE = 400.0f;
+
         if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS){
             cameraPos += cameraSpeed * cameraFront;
             if (cameraPos.y <= collisionLimit){
                 cameraPos.y = collisionLimit;
             }
+            cameraPos.x = (cameraPos.x > BORDER_EDGE) ? BORDER_EDGE : (cameraPos.x < -BORDER_EDGE ? -BORDER_EDGE : cameraPos.x);
+            cameraPos.z = (cameraPos.z > BORDER_EDGE) ? BORDER_EDGE : (cameraPos.z < -BORDER_EDGE ? -BORDER_EDGE : cameraPos.z);
 
         }
         if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS){
@@ -229,6 +233,9 @@ void processInput(GLFWwindow* window){
             if (cameraPos.y <= collisionLimit){
                 cameraPos.y = collisionLimit;
             }
+            cameraPos.x = (cameraPos.x > BORDER_EDGE) ? BORDER_EDGE : (cameraPos.x < -BORDER_EDGE ? -BORDER_EDGE : cameraPos.x);
+            cameraPos.z = (cameraPos.z > BORDER_EDGE) ? BORDER_EDGE : (cameraPos.z < -BORDER_EDGE ? -BORDER_EDGE : cameraPos.z);
+
 
         }
         if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS){
@@ -236,12 +243,18 @@ void processInput(GLFWwindow* window){
             if (cameraPos.y <= collisionLimit){
                 cameraPos.y = (collisionLimit);
             }
+            cameraPos.x = (cameraPos.x > BORDER_EDGE) ? BORDER_EDGE : (cameraPos.x < -BORDER_EDGE ? -BORDER_EDGE : cameraPos.x);
+            cameraPos.z = (cameraPos.z > BORDER_EDGE) ? BORDER_EDGE : (cameraPos.z < -BORDER_EDGE ? -BORDER_EDGE : cameraPos.z);
+
         }
         if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS){
             cameraPos += glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
             if (cameraPos.y <= collisionLimit){
                 cameraPos.y = (collisionLimit);
             }
+            cameraPos.x = (cameraPos.x > BORDER_EDGE) ? BORDER_EDGE : (cameraPos.x < -BORDER_EDGE ? -BORDER_EDGE : cameraPos.x);
+            cameraPos.z = (cameraPos.z > BORDER_EDGE) ? BORDER_EDGE : (cameraPos.z < -BORDER_EDGE ? -BORDER_EDGE : cameraPos.z);
+
         }
 
         if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
@@ -338,8 +351,71 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 
     float timeElapsed = glfwGetTime() - timeSinceLastInput;
 
-    if (key == GLFW_KEY_ENTER && action == GLFW_PRESS && !enterKeyPressed) {
+    // If text mode is enabled, capture printable characters
+    if (enable_text_mode && action == GLFW_PRESS) {
+        if (key == GLFW_KEY_BACKSPACE) {
+            if (!textInputBuffer.empty()) {
+                textInputBuffer.pop_back();
+            }
+        } else if (key == GLFW_KEY_ENTER) {
+            enable_text_mode = false;
+            CONTROLS_ENABLED = true;
+            FREECAM_CONTROLS_ENABLED = true;
+            if (textInputBuffer == ""){
+                return;
+            }
+            runRequestInThread(textInputBuffer); // sets te global llmOutput string when done.
+            textInputBuffer = "";
+        } else if (key == GLFW_KEY_SPACE) {
+            textInputBuffer += ' ';
+        } else {
+            const char* keyName = glfwGetKeyName(key, scancode);
+            if (keyName) {
+                char character = keyName[0];
+
+                // Handle Shift modifier for specific characters
+                if (mods & GLFW_MOD_SHIFT) {
+                    // Map common shifted characters manually
+                    if (character == '/') character = '?';
+                    else if (character == '1') character = '!';
+                    else if (character == '2') character = '@';
+                    else if (character == '3') character = '#';
+                    else if (character == '4') character = '$';
+                    else if (character == '5') character = '%';
+                    else if (character == '6') character = '^';
+                    else if (character == '7') character = '&';
+                    else if (character == '8') character = '*';
+                    else if (character == '9') character = '(';
+                    else if (character == '0') character = ')';
+                    else if (character == '-') character = '_';
+                    else if (character == '=') character = '+';
+                    else if (character == '[') character = '{';
+                    else if (character == ']') character = '}';
+                    else if (character == ';') character = ':';
+                    else if (character == '\'') character = '"';
+                    else if (character == ',') character = '<';
+                    else if (character == '.') character = '>';
+                    else if (character == '\\') character = '|';
+                    else if (character == '`') character = '~';
+                }
+
+                if (std::isprint(character)) {
+                    textInputBuffer += character;
+                }
+            }
+        }
+
+        return; // Skip further input processing while in text mode
+    }
+
+
+    if (key == GLFW_KEY_ENTER && action == GLFW_PRESS) {
         enterKeyPressed = true;
+        if (enable_text_mode == true){
+            enable_text_mode = false;
+            CONTROLS_ENABLED = true;
+            FREECAM_CONTROLS_ENABLED = true;
+        }
     }
 
     if (key == GLFW_KEY_UP && action == GLFW_PRESS && !enterKeyPressed) {
@@ -375,12 +451,19 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
     if (key == GLFW_KEY_K && action == GLFW_RELEASE && !enemyFightingToggle && CONTROLS_ENABLED) {
         timeSinceLastInput = glfwGetTime();
     }
+
     if (key == GLFW_KEY_L && action == GLFW_RELEASE && !enemyFightingToggle && CONTROLS_ENABLED) {
         timeSinceLastInput = glfwGetTime();
     }
 
     if (key == GLFW_KEY_J && action == GLFW_RELEASE && !enemyFightingToggle && CONTROLS_ENABLED) {
         timeSinceLastInput = glfwGetTime();
+    }
+
+    if (key == GLFW_KEY_T && action == GLFW_PRESS) {
+        enable_text_mode = true;
+        CONTROLS_ENABLED = false;
+        FREECAM_CONTROLS_ENABLED = false;
     }
 
     if (key == GLFW_KEY_SPACE && action == GLFW_RELEASE && CONTROLS_ENABLED) {

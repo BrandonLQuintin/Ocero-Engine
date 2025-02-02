@@ -5,14 +5,18 @@ in vec3 Normal;
 in vec3 FragPos;
 in vec2 TexCoord;
 
-uniform sampler2D texture1;
-uniform sampler2D texture2;
+uniform sampler2D texture1; // texture atlas
+uniform sampler2D texture2; // text, unused in this file
+uniform sampler2D texture3; // grass
+uniform sampler2D texture4; // snow
+uniform sampler2D texture5; // snow texture atlas
 
 uniform vec2 u;
 uniform vec2 v;
 
 uniform bool firstTextureAtlas;
 uniform bool isRaining;
+uniform bool isSnowing;
 uniform bool isTree;
 uniform bool isTransparent;
 
@@ -51,9 +55,19 @@ void main()
     vec4 texelColor;
 
     if (firstTextureAtlas) {
-        texelColor = texture(texture1, uv);
+        if (isSnowing){
+            texelColor = texture(texture5, uv);
+        }
+        else {
+            texelColor = texture(texture1, uv);
+        }
     } else {
-        texelColor = texture(texture2, TexCoord);
+        if (isSnowing){
+            texelColor = texture(texture4, TexCoord);
+        }
+        else {
+            texelColor = texture(texture3, TexCoord);
+        }
     }
 
     if (texelColor.a < 0.1) {

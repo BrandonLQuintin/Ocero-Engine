@@ -180,7 +180,7 @@ void renderText(Shader shader, std::string input) {
             continue;
         }
 
-        auto it = characterUV.find(c);
+        auto it = characterUV.find(c) != characterUV.end() ? characterUV.find(c) : characterUV.find('*');
         if (c != '\\' && it != characterUV.end()) {
             const auto& uvCoords = it->second;
             CharacterInstance instance;
@@ -194,9 +194,11 @@ void renderText(Shader shader, std::string input) {
 
             float charWidth = 0.0115f;
             textXOffset += charWidth * 1.8f;
-            if (textXOffset > 0.9f) {
-                textXOffset = -0.98f;
-                textYOffset -= 0.07f * 1.5f;
+            if (textXOffset > 0.8f) {
+                if (c == ' '){
+                    textXOffset = -0.98f;
+                    textYOffset -= 0.07f * 1.5f;
+                }
             }
         }
     }

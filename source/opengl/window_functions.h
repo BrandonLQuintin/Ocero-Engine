@@ -5,6 +5,7 @@
 #include "camera_variables.h"
 #include "../shapes/terrain.h"
 #include "../game/gameplay.h"
+#include "../llm/llm_functions.h"
 
 extern bool firstMouse;
 

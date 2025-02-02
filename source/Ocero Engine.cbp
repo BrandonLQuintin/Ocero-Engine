@@ -53,6 +53,7 @@
 			<Add option="-Wall" />
 			<Add directory="../Include/SFML/include" />
 			<Add directory="../Include/curl-8.11.1_3-win64-mingw/include" />
+			<Add directory="../Include/nlohmann" />
 		</Compiler>
 		<Linker>
 			<Add option="-static" />
@@ -78,6 +79,8 @@
 		</Unit>
 		<Unit filename="globals.cpp" />
 		<Unit filename="globals.h" />
+		<Unit filename="llm/llm_functions.cpp" />
+		<Unit filename="llm/llm_functions.h" />
 		<Unit filename="main.cpp" />
 		<Unit filename="opengl/camera_variables.cpp" />
 		<Unit filename="opengl/camera_variables.h" />
@@ -94,6 +97,8 @@
 		<Unit filename="resources/heightmap.png" />
 		<Unit filename="resources/sounds/punch.wav" />
 		<Unit filename="resources/textures/GrassTiles.png" />
+		<Unit filename="resources/textures/SnowTextureAtlas.png" />
+		<Unit filename="resources/textures/SnowTiles.png" />
 		<Unit filename="resources/textures/TextAtlas.png" />
 		<Unit filename="resources/textures/TextureAtlas.png" />
 		<Unit filename="rr.rc">

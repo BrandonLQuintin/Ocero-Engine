@@ -30,7 +30,7 @@ extern float normalizedScore;
 
 extern bool FREECAM_CONTROLS_ENABLED;
 extern bool CONTROLS_ENABLED;
-extern bool IS_RAINING;
+extern bool ENABLE_DOWNFALL;
 extern bool SLOW_MO;
 extern bool DISABLE_SLOW_MO;
 extern bool HIGH_RENDER_DISTANCE;
@@ -42,7 +42,7 @@ extern bool SHOW_FPS;
 extern bool text;
 
 const float PI = 3.14159265358979323846f;
-const bool ENABLE_DATA_COLLECTION = true;
+const bool ENABLE_DATA_COLLECTION = false;
 const unsigned int CHUNK_SIZE = 1000;
 const unsigned int POLY_RESOLUTION = 35;
 const unsigned int SMALL_CHUNK_SIZE = 50;
@@ -152,5 +152,12 @@ extern float endingTreeCalculationTime;
 extern float beginningTreeRenderTime;
 extern float endingTreeRenderTime;
 
-
+// llm
+const std::string OCERO_OLLAMA_MODEL = "llama3.1:latest";
+extern bool summoning_council;
+extern bool enable_text_mode;
+extern bool toggle_snow;
+extern std::string textInputBuffer;
+extern std::string llmOutput;
+extern std::string LLMfunctionSelection;
 

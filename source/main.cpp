@@ -22,6 +22,7 @@
 
 // REST API for ollama
 #include <curl/curl.h>
+#include "llm/llm_functions.h"
 
 // variables (may also contain functions)
 #include "globals.h"
@@ -66,18 +67,26 @@ int main(){
     initTextRendering();  // Initialize text rendering after shapes are initialized
 
     // ----- TEXTURES -----
-    unsigned int texture1, texture2, texture3;
+    unsigned int texture1, texture2, texture3, texture4, texture5;
     loadTexture(texture1, "resources/textures/TextureAtlas.png");
     loadTexture(texture2, "resources/textures/TextAtlas.png");
     loadTexture(texture3, "resources/textures/GrassTiles.png");
 
+
+    loadTexture(texture4, "resources/textures/SnowTiles.png"); // Snow textures set in effects part of rendering.
+    loadTexture(texture5, "resources/textures/SnowTextureAtlas.png");
+
     billboardShader.use();
     billboardShader.setInt("texture1", 0);
     billboardShader.setInt("texture2", 1);
+    billboardShader.setInt("texture5", 4);
 
     phongShader.use();
     phongShader.setInt("texture1", 0);
-    phongShader.setInt("texture2", 2);
+    phongShader.setInt("texture2", 1);
+    phongShader.setInt("texture3", 2);
+    phongShader.setInt("texture4", 3);
+    phongShader.setInt("texture5", 4);
 
     t.use();
     t.setInt("texture1", 0);
@@ -89,6 +98,10 @@ int main(){
     glBindTexture(GL_TEXTURE_2D, texture2);
     glActiveTexture(GL_TEXTURE2);
     glBindTexture(GL_TEXTURE_2D, texture3);
+    glActiveTexture(GL_TEXTURE3);
+    glBindTexture(GL_TEXTURE_2D, texture4);
+    glActiveTexture(GL_TEXTURE4);
+    glBindTexture(GL_TEXTURE_2D, texture5);
 
     // first atlas values
     std::vector<float> boxAtlasUV = returnTextureUV(0, 0);
@@ -228,7 +241,7 @@ int main(){
     for (int i = 0; i < rainDropsArraySize; i++)
         initializeRainLocation(rainDrops[i]);
 
-    if (IS_RAINING){
+    if (ENABLE_DOWNFALL){
         phongShader.use();
         phongShader.setBool("isRaining", true);
         phongShader.setFloat("fogDensity", FOG_DENSITY);
@@ -239,24 +252,12 @@ int main(){
 
     // ----- MAIN PROGRAM -----
     while (!glfwWindowShouldClose(window)){
+
         std::string animationText;
-
-        // FOR GATHERING DATA (REMOVE LATER)
-        cameraPos.z += (-1.0f * deltaTime);
-        terrainCoordBelowCamera = getHeight(cameraPos.x, cameraPos.z);
-        const float collisionLimit = terrainCoordBelowCamera + 1.0f;
-        if (cameraPos.y <= collisionLimit){
-                cameraPos.y = collisionLimit;
-        }
-
 
         float currentFrame = glfwGetTime();
         deltaTime = currentFrame - lastFrame;
         lastFrame = currentFrame;
-
-        if (ENABLE_DATA_COLLECTION){
-            dataInputChecker(currentFrame);
-        }
 
         while (mainMenu){
             if (glfwJoystickPresent(GLFW_JOYSTICK_2)) {
@@ -284,7 +285,7 @@ int main(){
 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        if (!FREECAM_CONTROLS_ENABLED){
+        if (!FREECAM_CONTROLS_ENABLED && !enable_text_mode){
             cameraFront = glm::normalize(glm::vec3(player[3][0], player[3][1], player[3][2]) - cameraPos);
             view = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
         }
@@ -301,11 +302,24 @@ int main(){
 
         // ----- EFFECTS ------
 
+        if (toggle_snow){
+            phongShader.use();
+            phongShader.setBool("isSnowing", true);
+            billboardShader.use();
+            billboardShader.setBool("isSnowing", true);
+        }
+        else{
+            phongShader.use();
+            phongShader.setBool("isSnowing", false);
+            billboardShader.use();
+            billboardShader.setBool("isSnowing", false);
+        }
+
+
         // NO EFFECTS USED IN ENGINE (ONLY IN GAME)
 
         // ----- OBJECTS ------
 
-        if (availableToInput && ENABLE_DATA_COLLECTION) beginningObjectRenderingTime = glfwGetTime();
         // ### BOXES
         phongShader.use();
         glBindVertexArray(phongBoxVAO);
@@ -335,7 +349,7 @@ int main(){
         for (int i = 0; i < spheresArraySize; i++){
 
             phongShader.setMat4("model", spheres[i].modelMatrix);
-            glDrawArrays(GL_TRIANGLE_STRIP, 0, phongSphereVerticesArraySize);
+            glDrawArrays(GL_TRIANGLES, 0, phongSphereVerticesArraySize);
         }
 
         // ### CONES
@@ -345,7 +359,7 @@ int main(){
         for (int i = 0; i < conesArraySize; i++){
 
             phongShader.setMat4("model", cones[i].modelMatrix);
-            glDrawArrays(GL_TRIANGLE_STRIP, 0, phongConeVerticesArraySize);
+            glDrawArrays(GL_TRIANGLES, 0, phongConeVerticesArraySize);
         }
 
         // ### TUBES
@@ -355,10 +369,25 @@ int main(){
         for (int i = 0; i < tubesArraySize; i++){
 
             phongShader.setMat4("model", tubes[i].modelMatrix);
-            glDrawArrays(GL_TRIANGLE_STRIP, 0, phongCylinderVerticesArraySize);
+            glDrawArrays(GL_TRIANGLES, 0, phongCylinderVerticesArraySize);
         }
 
         // ### BILLBOARDS
+        if (summoning_council){
+            billboards[1].modelMatrix[3][0] = cameraPos.x;
+            billboards[1].modelMatrix[3][1] = cameraPos.y;
+            billboards[1].modelMatrix[3][2] = cameraPos.z;
+
+            billboards[0].modelMatrix[3][0] = billboards[1].modelMatrix[3][0] - 1;
+            billboards[0].modelMatrix[3][1] = billboards[1].modelMatrix[3][1];
+            billboards[0].modelMatrix[3][2] = billboards[1].modelMatrix[3][2];
+
+            billboards[2].modelMatrix[3][0] = billboards[1].modelMatrix[3][0] + 1;
+            billboards[2].modelMatrix[3][1] = billboards[1].modelMatrix[3][1];
+            billboards[2].modelMatrix[3][2] = billboards[1].modelMatrix[3][2];
+
+            summoning_council = false;
+        }
         billboardShader.use();
         glBindVertexArray(phongBillboardVAO);
         setTextureUV(billboardShader, oceroAtlasUV, false);
@@ -381,7 +410,7 @@ int main(){
         }
 
         // ### RAIN
-        if (IS_RAINING){
+        if (ENABLE_DOWNFALL){
             billboardShader.use();
             glBindVertexArray(phongBillboardVAO);
             setTextureUV(billboardShader, rainAtlasUV, false);
@@ -414,8 +443,6 @@ int main(){
         glBindVertexArray(phongBillboardVAO);
         setTextureUV(phongShader, treeAtlasUV, false);
 
-        if (availableToInput && ENABLE_DATA_COLLECTION) beginningTreeCalculationTime = glfwGetTime();
-
         // return list of chunks to render 3x3 chunks.
         std::array<std::pair<int, int>, 9> renderingChunks;
         std::pair<int, int> origin = getChunkCoordinates(cameraPos.x, cameraPos.z); // origin x & y chunk
@@ -440,10 +467,6 @@ int main(){
             }
         }
 
-        if (availableToInput && ENABLE_DATA_COLLECTION){
-            endingTreeCalculationTime = glfwGetTime();
-            beginningTreeRenderTime = glfwGetTime();
-        }
         for (int i = 0; i < activeTrees.size(); i++) {
             if (activeTrees[i].distanceFromCamera < 5.0f){
                 phongShader.setBool("isTransparent", true);
@@ -460,70 +483,34 @@ int main(){
                 glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
             }
         }
-        if (availableToInput && ENABLE_DATA_COLLECTION) totalTreeCountCollection[currentSecondCounter] = activeTrees.size();
         activeTrees.clear();
         phongShader.setBool("isTree", false);
-
-        if (availableToInput && ENABLE_DATA_COLLECTION){
-            endingTreeRenderTime = glfwGetTime();
-            endingObjectRenderingTime = glfwGetTime();
-        }
 
         glDisable(GL_BLEND);
         int fps = calculateAverageFPS(timeSinceLastFPSCalculation, deltaTime, fpsVector, SLOW_MO);
 
         // ----- DRAW TEXT ------
 
-        if (availableToInput && ENABLE_DATA_COLLECTION) beginningTextCalculationTime = glfwGetTime();
         std::string text;
         if (SHOW_FPS)
-            text += "\\" + std::to_string(fps) + " fps";
+            text += std::to_string(fps) + " fps";
         if (FREECAM_CONTROLS_ENABLED){
             text += "\\camera coordinates: [" + std::to_string(cameraPos.x) + ", "+ std::to_string(cameraPos.y) + ", " + std::to_string(cameraPos.z) + "]";
         }
-        if (dataCollected){
-            text += "\\data collected!";
-        }
-        text += "\\" + std::to_string(currentFrame);
-        text += "\\" + std::to_string(currentSecondCounter);
-        if (availableToInput && ENABLE_DATA_COLLECTION) endingTextCalculationTime = glfwGetTime();
 
-        if (availableToInput && ENABLE_DATA_COLLECTION) beginningTextRenderingTime = glfwGetTime();
         renderText(t, text);
         renderText(t, animationText);
-        if (availableToInput && ENABLE_DATA_COLLECTION) endingTextRenderingTime = glfwGetTime();
+        if (textInputBuffer != ""){
+                renderText(t, "\\\\\\\\\\\\\\\\> " + textInputBuffer);
+        }
+        renderText(t, LLMfunctionSelection);
+        renderText(t, llmOutput);
 
         // end of a frame
 
         glfwSwapBuffers(window);
         glfwPollEvents();
 
-        // data collection
-        if (availableToInput && ENABLE_DATA_COLLECTION){
-            const float currentTime = glfwGetTime();
-            fpsCollection[currentSecondCounter] = static_cast<int>(1 / (currentTime - lastFrame));
-            averageFpsCollection[currentSecondCounter] = fps;
-            zCoordCollection[currentSecondCounter] = cameraPos.z;
-
-            // CPU + GPU
-            inputMilliseconds(currentFrame, currentTime, totalCalculationTimeCollection);
-            inputMilliseconds(beginningObjectRenderingTime, endingObjectRenderingTime, objectRenderTimeCollection);
-
-            // text
-            inputMilliseconds(beginningTextCalculationTime, endingTextCalculationTime, textCalculationTimeCollection);
-            inputMilliseconds(beginningTextRenderingTime, endingTextRenderingTime, textRenderTimeCollection);
-
-            // tree
-            inputMilliseconds(beginningTreeCalculationTime, endingTreeCalculationTime, treeCalculationTimeCollection);
-            inputMilliseconds(beginningTreeRenderTime, endingTreeRenderTime, treeRenderTimeCollection);
-
-            availableToInput = false;
-        }
-
-        if (ENABLE_DATA_COLLECTION && !dataCollected && currentSecondCounter == totalSeconds - 1){
-            dataCollected = true;
-            createCsv();
-        }
     }
     glfwTerminate();
     return 0;

@@ -44,9 +44,9 @@ void processMainMenu(GLFWwindow* window, Shader t, int &choice){
         outputText += std::string("\\  show_fps: ") + (SHOW_FPS ? "true" : "false");
 
     if (choice == 2)
-        outputText += std::string("\\* is_raining: ") + (IS_RAINING ? "true" : "false");
+        outputText += std::string("\\* enable_downfall: ") + (ENABLE_DOWNFALL ? "true" : "false");
     else
-        outputText += std::string("\\  is_raining: ") + (IS_RAINING ? "true" : "false");
+        outputText += std::string("\\  enable_downfall: ") + (ENABLE_DOWNFALL ? "true" : "false");
 
     if (choice == 3)
         outputText += std::string("\\* enable_vsync: ") + (ENABLE_VSYNC ? "true" : "false");
@@ -82,7 +82,7 @@ void processMainMenu(GLFWwindow* window, Shader t, int &choice){
             enterKeyPressed = false;
         }
         else if (choice == 2){
-            IS_RAINING = !IS_RAINING;
+            ENABLE_DOWNFALL = !ENABLE_DOWNFALL;
             enterKeyPressed = false;
         }
         else if (choice == 3){

@@ -5,7 +5,7 @@ std::mt19937 gen(rd()); // for use with random
 
 // game settings
 bool restartGame = false;
-bool IS_RAINING = true;
+bool ENABLE_DOWNFALL = true;
 bool SLOW_MO = false;
 bool DISABLE_SLOW_MO = false;
 bool HIGH_RENDER_DISTANCE = false;
@@ -34,7 +34,7 @@ float DESPAWN_DISTANCE = 55.0f; // usually 60.0f
 float FOG_DENSITY = 0.001f; // usually 0.001f
 float MOVEMENT_SPEED = 12.0f;
 
-bool mainMenu = false;
+bool mainMenu = true;
 int menuChoice = 0;
 bool enterKeyPressed = false;
 
@@ -122,6 +122,13 @@ float beginningTreeCalculationTime = 0.0f;
 float endingTreeCalculationTime = 0.0f;
 float beginningTreeRenderTime = 0.0f;
 float endingTreeRenderTime = 0.0f;
+
+bool summoning_council = false;
+bool enable_text_mode = false;
+bool toggle_snow = false;
+std::string textInputBuffer;
+std::string llmOutput;
+std::string LLMfunctionSelection;
 
 float randomInRange(float min, float max) {
     std::uniform_real_distribution<float> distribution(min, max);
