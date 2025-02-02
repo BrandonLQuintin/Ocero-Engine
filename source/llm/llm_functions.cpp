@@ -118,12 +118,26 @@ void sendPythonRequest(const std::string& prompt) {
             ollamaFunctionSelection = jsonData["tool_selection"];
             std::cout << ollamaFunctionSelection << std::endl;
 
+            bool toolSelected = false;
             if (ollamaFunctionSelection == "spawn_lightning"){
                 LLMfunctionSelection = "\\\\\\\\\\tool selected: spawn_lightning";
+                toolSelected = true;
             }
-            else{
+            if (ollamaFunctionSelection == "change_to_winter"){
+                LLMfunctionSelection = "\\\\\\\\\\tool selected: change_to_winter";
+                toggle_snow = true;
+                toolSelected = true;
+            }
+            if (ollamaFunctionSelection == "change_to_spring"){
+                LLMfunctionSelection = "\\\\\\\\\\tool selected: change_to_spring";
+                toggle_snow = false;
+                toolSelected = true;
+            }
+
+            if (!toolSelected){
                  LLMfunctionSelection = "";
             }
+
         } catch (const std::exception& e) {
             std::cerr << "Failed to parse JSON response: " << e.what() << std::endl;
             response = "\\\\\\\\\\\\\\\\\\\\\\\\\\error giving response, try again. or please download and run ollama from ollama.com";

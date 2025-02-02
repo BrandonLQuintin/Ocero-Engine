@@ -5,7 +5,7 @@ std::mt19937 gen(rd()); // for use with random
 
 // game settings
 bool restartGame = false;
-bool IS_RAINING = true;
+bool ENABLE_DOWNFALL = true;
 bool SLOW_MO = false;
 bool DISABLE_SLOW_MO = false;
 bool HIGH_RENDER_DISTANCE = false;
@@ -124,6 +124,7 @@ float beginningTreeRenderTime = 0.0f;
 float endingTreeRenderTime = 0.0f;
 
 bool enable_text_mode = false;
+bool toggle_snow = false;
 std::string textInputBuffer;
 std::string llmOutput;
 std::string LLMfunctionSelection;
