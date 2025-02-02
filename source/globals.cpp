@@ -123,6 +123,7 @@ float endingTreeCalculationTime = 0.0f;
 float beginningTreeRenderTime = 0.0f;
 float endingTreeRenderTime = 0.0f;
 
+bool summoning_council = false;
 bool enable_text_mode = false;
 bool toggle_snow = false;
 std::string textInputBuffer;

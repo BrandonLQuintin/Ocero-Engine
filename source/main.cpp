@@ -250,16 +250,8 @@ int main(){
         billboardShader.setFloat("fogDensity", FOG_DENSITY);
     }
 
-    int i = 0;
-
     // ----- MAIN PROGRAM -----
     while (!glfwWindowShouldClose(window)){
-
-        if (i == 0){
-
-            i++;
-        }
-
 
         std::string animationText;
 
@@ -381,6 +373,21 @@ int main(){
         }
 
         // ### BILLBOARDS
+        if (summoning_council){
+            billboards[1].modelMatrix[3][0] = cameraPos.x;
+            billboards[1].modelMatrix[3][1] = cameraPos.y;
+            billboards[1].modelMatrix[3][2] = cameraPos.z;
+
+            billboards[0].modelMatrix[3][0] = billboards[1].modelMatrix[3][0] - 1;
+            billboards[0].modelMatrix[3][1] = billboards[1].modelMatrix[3][1];
+            billboards[0].modelMatrix[3][2] = billboards[1].modelMatrix[3][2];
+
+            billboards[2].modelMatrix[3][0] = billboards[1].modelMatrix[3][0] + 1;
+            billboards[2].modelMatrix[3][1] = billboards[1].modelMatrix[3][1];
+            billboards[2].modelMatrix[3][2] = billboards[1].modelMatrix[3][2];
+
+            summoning_council = false;
+        }
         billboardShader.use();
         glBindVertexArray(phongBillboardVAO);
         setTextureUV(billboardShader, oceroAtlasUV, false);
