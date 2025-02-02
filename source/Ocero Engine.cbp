@@ -97,6 +97,8 @@
 		<Unit filename="resources/heightmap.png" />
 		<Unit filename="resources/sounds/punch.wav" />
 		<Unit filename="resources/textures/GrassTiles.png" />
+		<Unit filename="resources/textures/SnowTextureAtlas.png" />
+		<Unit filename="resources/textures/SnowTiles.png" />
 		<Unit filename="resources/textures/TextAtlas.png" />
 		<Unit filename="resources/textures/TextureAtlas.png" />
 		<Unit filename="rr.rc">
