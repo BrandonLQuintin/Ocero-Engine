@@ -357,7 +357,7 @@ int main(){
         for (int i = 0; i < spheresArraySize; i++){
 
             phongShader.setMat4("model", spheres[i].modelMatrix);
-            glDrawArrays(GL_TRIANGLE_STRIP, 0, phongSphereVerticesArraySize);
+            glDrawArrays(GL_TRIANGLES, 0, phongSphereVerticesArraySize);
         }
 
         // ### CONES
@@ -367,7 +367,7 @@ int main(){
         for (int i = 0; i < conesArraySize; i++){
 
             phongShader.setMat4("model", cones[i].modelMatrix);
-            glDrawArrays(GL_TRIANGLE_STRIP, 0, phongConeVerticesArraySize);
+            glDrawArrays(GL_TRIANGLES, 0, phongConeVerticesArraySize);
         }
 
         // ### TUBES
@@ -377,7 +377,7 @@ int main(){
         for (int i = 0; i < tubesArraySize; i++){
 
             phongShader.setMat4("model", tubes[i].modelMatrix);
-            glDrawArrays(GL_TRIANGLE_STRIP, 0, phongCylinderVerticesArraySize);
+            glDrawArrays(GL_TRIANGLES, 0, phongCylinderVerticesArraySize);
         }
 
         // ### BILLBOARDS
