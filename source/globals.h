@@ -154,6 +154,7 @@ extern float endingTreeRenderTime;
 
 // llm
 const std::string OCERO_OLLAMA_MODEL = "llama3.1:latest";
+extern bool summoning_council;
 extern bool enable_text_mode;
 extern bool toggle_snow;
 extern std::string textInputBuffer;

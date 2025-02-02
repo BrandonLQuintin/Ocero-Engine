@@ -119,8 +119,9 @@ void sendPythonRequest(const std::string& prompt) {
             std::cout << ollamaFunctionSelection << std::endl;
 
             bool toolSelected = false;
-            if (ollamaFunctionSelection == "spawn_lightning"){
-                LLMfunctionSelection = "\\\\\\\\\\tool selected: spawn_lightning";
+            if (ollamaFunctionSelection == "summon_council"){
+                LLMfunctionSelection = "\\\\\\\\\\tool selected: summon_council";
+                summoning_council = true;
                 toolSelected = true;
             }
             if (ollamaFunctionSelection == "change_to_winter"){
