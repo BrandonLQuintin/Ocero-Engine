@@ -67,18 +67,26 @@ int main(){
     initTextRendering();  // Initialize text rendering after shapes are initialized
 
     // ----- TEXTURES -----
-    unsigned int texture1, texture2, texture3;
+    unsigned int texture1, texture2, texture3, texture4, texture5;
     loadTexture(texture1, "resources/textures/TextureAtlas.png");
     loadTexture(texture2, "resources/textures/TextAtlas.png");
     loadTexture(texture3, "resources/textures/GrassTiles.png");
 
+
+    loadTexture(texture4, "resources/textures/SnowTiles.png"); // Snow textures set in effects part of rendering.
+    loadTexture(texture5, "resources/textures/SnowTextureAtlas.png");
+
     billboardShader.use();
     billboardShader.setInt("texture1", 0);
     billboardShader.setInt("texture2", 1);
+    billboardShader.setInt("texture5", 4);
 
     phongShader.use();
     phongShader.setInt("texture1", 0);
-    phongShader.setInt("texture2", 2);
+    phongShader.setInt("texture2", 1);
+    phongShader.setInt("texture3", 2);
+    phongShader.setInt("texture4", 3);
+    phongShader.setInt("texture5", 4);
 
     t.use();
     t.setInt("texture1", 0);
@@ -90,6 +98,10 @@ int main(){
     glBindTexture(GL_TEXTURE_2D, texture2);
     glActiveTexture(GL_TEXTURE2);
     glBindTexture(GL_TEXTURE_2D, texture3);
+    glActiveTexture(GL_TEXTURE3);
+    glBindTexture(GL_TEXTURE_2D, texture4);
+    glActiveTexture(GL_TEXTURE4);
+    glBindTexture(GL_TEXTURE_2D, texture5);
 
     // first atlas values
     std::vector<float> boxAtlasUV = returnTextureUV(0, 0);
@@ -229,7 +241,7 @@ int main(){
     for (int i = 0; i < rainDropsArraySize; i++)
         initializeRainLocation(rainDrops[i]);
 
-    if (IS_RAINING){
+    if (ENABLE_DOWNFALL){
         phongShader.use();
         phongShader.setBool("isRaining", true);
         phongShader.setFloat("fogDensity", FOG_DENSITY);
@@ -237,6 +249,7 @@ int main(){
         billboardShader.setBool("isRaining", true);
         billboardShader.setFloat("fogDensity", FOG_DENSITY);
     }
+
     int i = 0;
 
     // ----- MAIN PROGRAM -----
@@ -296,6 +309,20 @@ int main(){
         phongShader.setVec3("viewPos", cameraPos);
 
         // ----- EFFECTS ------
+
+        if (toggle_snow){
+            phongShader.use();
+            phongShader.setBool("isSnowing", true);
+            billboardShader.use();
+            billboardShader.setBool("isSnowing", true);
+        }
+        else{
+            phongShader.use();
+            phongShader.setBool("isSnowing", false);
+            billboardShader.use();
+            billboardShader.setBool("isSnowing", false);
+        }
+
 
         // NO EFFECTS USED IN ENGINE (ONLY IN GAME)
 
@@ -376,7 +403,7 @@ int main(){
         }
 
         // ### RAIN
-        if (IS_RAINING){
+        if (ENABLE_DOWNFALL){
             billboardShader.use();
             glBindVertexArray(phongBillboardVAO);
             setTextureUV(billboardShader, rainAtlasUV, false);

@@ -7,12 +7,14 @@ in vec2 TexCoord;
 
 uniform sampler2D texture1;
 uniform sampler2D texture2;
+uniform sampler2D texture5;
 
 uniform vec2 u;
 uniform vec2 v;
 
 uniform bool firstTextureAtlas;
 uniform bool isRaining;
+uniform bool isSnowing;
 
 uniform float fogDensity;
 
@@ -50,7 +52,12 @@ void main()
 
 
     if (firstTextureAtlas){
-        texelColor = texture(texture1, uv);
+        if (isSnowing){
+            texelColor = texture(texture5, uv);
+        }
+        else{
+            texelColor = texture(texture1, uv);
+        }
     }
 
     else{
