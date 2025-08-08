@@ -120,7 +120,7 @@ void processMainMenu(GLFWwindow* window, Shader t, int &choice){
             ENABLE_TEXT = text;
             mainMenu = false;
             if (ENABLE_SOUND)
-                music.play();
+                getMusic().play();
             lastFrame = glfwGetTime();
 
             //cameraPos.x = player[3][0];

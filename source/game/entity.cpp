@@ -1,4 +1,5 @@
 #include "entity.h"
+#include <array>
 
 uint32_t globalSeed = static_cast<uint32_t>(std::time(0));
 

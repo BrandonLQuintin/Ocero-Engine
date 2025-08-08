@@ -17,9 +17,21 @@ bool FREECAM_CONTROLS_ENABLED = true;
 bool CONTROLS_ENABLED = true;
 bool SHOW_FPS = true;
 
-sf::Music music;
-sf::Music winSong;
-sf::Sound explosionSound;
+// Lazy initialization of audio objects to avoid static initialization order issues
+sf::Music& getMusic() {
+    static sf::Music instance;
+    return instance;
+}
+
+sf::Music& getWinSong() {
+    static sf::Music instance;
+    return instance;
+}
+
+sf::Sound& getExplosionSound() {
+    static sf::Sound instance;
+    return instance;
+}
 
 bool gameOver = false;
 

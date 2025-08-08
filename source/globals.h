@@ -18,9 +18,10 @@ extern bool mainMenu;
 extern float MOVEMENT_SPEED;
 extern bool gameOver;
 
-extern sf::Music music;
-extern sf::Music winSong;
-extern sf::Sound explosionSound;
+// Lazy-initialized audio accessors to avoid static init order issues
+sf::Music& getMusic();
+sf::Music& getWinSong();
+sf::Sound& getExplosionSound();
 
 extern int playerLives;
 extern int enemyLives;

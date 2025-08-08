@@ -1,5 +1,6 @@
 #include "llm_functions.h"
 
+#if OCERO_ENABLE_LLM
 // Callback function to capture the response from the server
 size_t WriteCallback(void* contents, size_t size, size_t nmemb, std::string* response) {
     size_t totalSize = size * nmemb;
@@ -157,3 +158,25 @@ void runRequestInThread(const std::string& prompt) {
     std::thread requestThread(sendPythonRequest, prompt);
     requestThread.detach(); // Detach the thread to run independently
 }
+#else
+
+// Stubs when LLM is disabled
+size_t WriteCallback(void* contents, size_t size, size_t nmemb, std::string* response) {
+    return size * nmemb;
+}
+
+std::string sendOllamaRequest(const std::string& model, const std::string& prompt) {
+    (void)model; (void)prompt;
+    return ""; // No output when disabled
+}
+
+void sendPythonRequest(const std::string& prompt) {
+    (void)prompt;
+    llmOutput = "\\\\\\\\\\\\\\LLM disabled at build time. Enable with -DOceroEngine_ENABLE_LLM=ON";
+}
+
+void runRequestInThread(const std::string& prompt) {
+    // Directly set message synchronously since no background work is done
+    sendPythonRequest(prompt);
+}
+#endif

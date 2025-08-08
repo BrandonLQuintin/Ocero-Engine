@@ -1,0 +1,25 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "OceroEngine (LLDB Debug)",
+      "type": "lldb",
+      "request": "launch",
+      "program": "${workspaceFolder}/build/Debug/bin/OceroEngine",
+      "args": [],
+      "cwd": "${workspaceFolder}/build/Debug/bin",
+      "env": {},
+      "preLaunchTask": "Build OceroEngine (Debug)"
+    },
+    {
+      "name": "OceroEngine (LLDB Release)",
+      "type": "lldb",
+      "request": "launch",
+      "program": "${workspaceFolder}/build/Release/bin/OceroEngine",
+      "args": [],
+      "cwd": "${workspaceFolder}/build/Release/bin",
+      "env": {},
+      "preLaunchTask": "Build OceroEngine (Release)"
+    }
+  ]
+}

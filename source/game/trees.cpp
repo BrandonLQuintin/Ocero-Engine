@@ -72,17 +72,17 @@ void initializeTreeLocations(const std::array<std::pair<int, int>, 9> renderingC
     }
 
     for (int x = 0; x < 9; x++){
-        for (int i = 0; i < trees.size(); i++){
+        for (size_t i = 0; i < trees[x].size(); i++){
             trees[x][i].modelMatrix[3][0] = (std::floor(renderingChunks[x].first) * SMALL_CHUNK_SIZE) + xOffset[x][i];
             trees[x][i].modelMatrix[3][2] = (std::floor(renderingChunks[x].second) * SMALL_CHUNK_SIZE) + zOffset[x][i];
 
             trees[x][i].modelMatrix[3][1] = getHeight(trees[x][i].modelMatrix[3][0], trees[x][i].modelMatrix[3][2]) + 2.3f;
         }
 
-        for (int i = 0; i < trees.size(); i++){
+        for (size_t i = 0; i < trees[x].size(); i++){
             trees[x][i].cloneModelMatrix = trees[x][i].modelMatrix;
         }
-        for (int i = 0; i < trees.size(); i++){
+        for (size_t i = 0; i < trees[x].size(); i++){
             trees[x][i].cloneModelMatrix = glm::rotate(trees[x][i].cloneModelMatrix, glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
             trees[x][i].cloneModelMatrix[3][0] = trees[x][i].modelMatrix[3][0] + 0.55f;
             trees[x][i].cloneModelMatrix[3][1] = trees[x][i].modelMatrix[3][1];

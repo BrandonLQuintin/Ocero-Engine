@@ -1,0 +1,12 @@
+{
+  "cmake.buildDirectory": "${workspaceFolder}/build/${buildType}",
+  "cmake.buildType": "Debug",
+  "cmake.debugConfig": {
+    "cwd": "${workspaceFolder}/build/${buildType}/bin"
+  },
+  "cmake.configureOnOpen": true,
+  "C_Cpp.default.configurationProvider": "ms-vscode.cmake-tools",
+  "cmake.configureSettings": {
+    "CMAKE_EXPORT_COMPILE_COMMANDS": "ON"
+  }
+}

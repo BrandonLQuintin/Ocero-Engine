@@ -447,7 +447,7 @@ void handleGameOver(glm::mat4 &player, glm::mat4 &enemy, std::string &animationT
         healthVertices[15] = normalizedScore;
 
         if (ENABLE_SOUND){
-            music.play();
+            getMusic().play();
         }
     }
 }
@@ -463,8 +463,8 @@ void handleHealth(){
             if (enemyLives < 0){
                 gameOver = true;
                 if (ENABLE_SOUND){
-                    music.stop();
-                    winSong.play();
+                    getMusic().stop();
+                    getWinSong().play();
                     sf::sleep(sf::milliseconds(8000));
                 }
             }
@@ -475,8 +475,8 @@ void handleHealth(){
             if (playerLives < 0){
                 gameOver = true;
                 if (ENABLE_SOUND){
-                    music.stop();
-                    winSong.play();
+                    getMusic().stop();
+                    getWinSong().play();
                     sf::sleep(sf::milliseconds(8000));
                 }
             }

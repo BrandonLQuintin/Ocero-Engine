@@ -1,14 +1,17 @@
 #pragma once
 
 #include <cctype> // used for lowercase
-#include <json.hpp>
 #include <iostream>
 #include <string>
-#include <curl/curl.h>
 #include <thread>
 #include <algorithm>
 
 #include "../globals.h"
+
+#if OCERO_ENABLE_LLM
+#include <json.hpp>
+#include <curl/curl.h>
+#endif
 
 
 size_t WriteCallback(void* contents, size_t size, size_t nmemb, std::string* response);

@@ -1,4 +1,7 @@
 #pragma once
+#include <array>
+#include <utility>
+#include <vector>
 #include "../globals.h"
 #include "../shapes/shapes.h"
 #include "../shapes/terrain.h"

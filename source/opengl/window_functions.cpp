@@ -1,5 +1,6 @@
 #include "window_functions.h"
 #include <iostream>
+#include <cstdlib>
 
 
 bool firstMouse = true;
@@ -25,25 +26,85 @@ bool prevleftTrigger = false;
 bool controllerConnected = false;
 
 
+static void glfwErrorCallback(int error, const char* description){
+    std::cerr << "GLFW Error [" << error << "]: " << description << std::endl;
+}
+
 GLFWwindow* createWindow(){
-    glfwInit();
+    glfwSetErrorCallback(glfwErrorCallback);
+    if (!glfwInit()){
+        std::cerr << "glfwInit() failed. DISPLAY='" << (std::getenv("DISPLAY") ? std::getenv("DISPLAY") : "")
+                  << "' WAYLAND_DISPLAY='" << (std::getenv("WAYLAND_DISPLAY") ? std::getenv("WAYLAND_DISPLAY") : "")
+                  << "'" << std::endl;
+        return nullptr;
+    }
+    GLFWwindow* window = nullptr;
+
+    // Attempt 1: OpenGL 3.3 Core
+    glfwDefaultWindowHints();
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-
     #ifdef __APPLE__
         glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
     #endif
+    window = glfwCreateWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Ocero 3D", NULL, NULL);
 
-    GLFWwindow* window = glfwCreateWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Ocero 3D", NULL, NULL);
+    // Attempt 2: OpenGL 3.2 Core
+    if (!window){
+        std::cerr << "Retrying with OpenGL 3.2 Core..." << std::endl;
+        glfwDefaultWindowHints();
+        glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+        glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
+        glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+        #ifdef __APPLE__
+            glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+        #endif
+        window = glfwCreateWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Ocero 3D", NULL, NULL);
+    }
+
+    // Attempt 3: OpenGL 3.0 Any profile
+    if (!window){
+        std::cerr << "Retrying with OpenGL 3.0 Any profile..." << std::endl;
+        glfwDefaultWindowHints();
+        glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+        glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
+        glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_ANY_PROFILE);
+        window = glfwCreateWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Ocero 3D", NULL, NULL);
+    }
+
+    // Attempt 4: Default hints
+    if (!window){
+        std::cerr << "Retrying with default GLFW hints..." << std::endl;
+        glfwDefaultWindowHints();
+        window = glfwCreateWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Ocero 3D", NULL, NULL);
+    }
+
+    // Attempt 5: Use EGL context creation API
+    if (!window){
+        std::cerr << "Retrying with EGL context creation API..." << std::endl;
+        glfwDefaultWindowHints();
+        glfwWindowHint(GLFW_CONTEXT_CREATION_API, GLFW_EGL_CONTEXT_API);
+        glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+        glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
+        glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_ANY_PROFILE);
+        window = glfwCreateWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Ocero 3D", NULL, NULL);
+    }
+
     if (window == NULL){
         std::cout << "Failed to create GLFW window" << std::endl;
         glfwTerminate();
+        return nullptr;
     }
+    // Set window icon if available
     GLFWimage images[1];
-    images[0].pixels = stbi_load("./game/icon.png", &images[0].width, &images[0].height, 0, 4); //rgba channels
-    glfwSetWindowIcon(window, 1, images);
-    stbi_image_free(images[0].pixels);
+    images[0].pixels = stbi_load("./game/icon.png", &images[0].width, &images[0].height, 0, 4); // rgba channels
+    if (images[0].pixels){
+        glfwSetWindowIcon(window, 1, images);
+        stbi_image_free(images[0].pixels);
+    } else {
+        std::cerr << "Warning: could not load window icon at ./game/icon.png" << std::endl;
+    }
 
 
     glfwMakeContextCurrent(window);
@@ -56,7 +117,18 @@ GLFWwindow* createWindow(){
     // ---------------------------------------
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)){
         std::cout << "Failed to initialize GLAD" << std::endl;
+        glfwDestroyWindow(window);
+        glfwTerminate();
+        return nullptr;
     }
+
+    // Log GL info (after GLAD is initialized)
+    const GLubyte* ver = glGetString(GL_VERSION);
+    const GLubyte* ven = glGetString(GL_VENDOR);
+    const GLubyte* ren = glGetString(GL_RENDERER);
+    std::cout << "OpenGL Version: " << (ver ? reinterpret_cast<const char*>(ver) : "unknown") << std::endl;
+    std::cout << "OpenGL Vendor:  " << (ven ? reinterpret_cast<const char*>(ven) : "unknown") << std::endl;
+    std::cout << "OpenGL Renderer:" << (ren ? reinterpret_cast<const char*>(ren) : "unknown") << std::endl;
 
     fullscreen(window);
     fullscreen(window);
@@ -178,7 +250,7 @@ void processInput(GLFWwindow* window){
             prevButtonStart = state.buttons[GLFW_GAMEPAD_BUTTON_START] == GLFW_PRESS;
 
         if (!prevButtonSelect && state.buttons[GLFW_GAMEPAD_BUTTON_BACK] == GLFW_PRESS){
-                music.pause();
+                getMusic().pause();
                 mainMenu = true;
                 enterKeyPressed = false;
                 ENABLE_TEXT = true;
@@ -470,7 +542,7 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
         teleportKeyPressed = false;
     }
     if (key == GLFW_KEY_TAB && action == GLFW_PRESS) {
-        music.pause();
+        getMusic().pause();
         mainMenu = true;
         enterKeyPressed = false;
         ENABLE_TEXT = true;

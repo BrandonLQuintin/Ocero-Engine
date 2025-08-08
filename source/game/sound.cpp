@@ -1,11 +1,15 @@
 #include "sound.h"
 
 std::vector<sf::Sound> sounds;
-sf::SoundBuffer buffer;
+
+sf::SoundBuffer& getPunchBuffer() {
+    static sf::SoundBuffer buffer;
+    return buffer;
+}
 
 // Function to load a sound buffer from a file
 bool loadSoundBuffer(const std::string& filePath){
-    return buffer.loadFromFile(filePath);
+    return getPunchBuffer().loadFromFile(filePath);
 }
 
 // Function to find an available (stopped) sound instance, or return nullptr if none are available
@@ -22,7 +26,7 @@ sf::Sound* findAvailableSound(){
 void createAndPlaySound(){
     sounds.emplace_back(); // Add a new sf::Sound to the end of the vector
     auto& sound = sounds.back();
-    sound.setBuffer(buffer);
+    sound.setBuffer(getPunchBuffer());
     if(SLOW_MO)
         sound.setPitch(randomInRange(0.65f, 0.75f));
     else
@@ -47,14 +51,14 @@ void playSound(){
 
 void playSoundSilentlyMultipleTimes(int times) {
     // Ensure the buffer is loaded before attempting to play
-    if (!buffer.getSampleCount()){
+    if (!getPunchBuffer().getSampleCount()){
         std::cerr << "Buffer is empty, load a sound file first." << std::endl;
         return;
     }
 
     for (int i = 0; i < times; ++i) {
         sf::Sound sound;
-        sound.setBuffer(buffer);
+        sound.setBuffer(getPunchBuffer());
         sound.setVolume(0); // Mute the sound
         sound.play();
 

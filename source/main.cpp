@@ -46,6 +46,10 @@
 
 int main(){
     GLFWwindow* window = createWindow();
+    if (!window){
+        std::cerr << "Error: window creation failed. Exiting." << std::endl;
+        return 1;
+    }
     glEnable(GL_DEPTH_TEST);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     Shader billboardShader("shaders/billboard_shader.vs", "shaders/billboard_shader.fs");
@@ -146,19 +150,19 @@ int main(){
         return -1;
     }
     playSoundSilentlyMultipleTimes(30);
-    music.openFromFile("resources/music/Dual-Dragon.wav");
-    music.setVolume(30.0f);
-    music.setLoop(true);
+    getMusic().openFromFile("resources/music/Dual-Dragon.wav");
+    getMusic().setVolume(30.0f);
+    getMusic().setLoop(true);
 
-    winSong.openFromFile("resources/music/WinSong.wav");
-    winSong.setVolume(30.0f);
+    getWinSong().openFromFile("resources/music/WinSong.wav");
+    getWinSong().setVolume(30.0f);
 
     sf::SoundBuffer buffer2;
     if (!buffer2.loadFromFile("resources/sounds/explosion.wav")) {
         return -1; // error loading file
     }
-    explosionSound.setBuffer(buffer2);
-    explosionSound.setVolume(75.0f);
+    getExplosionSound().setBuffer(buffer2);
+    getExplosionSound().setVolume(75.0f);
 
     // ----- INITIALIZE OBJECTS -----
 
@@ -452,7 +456,7 @@ int main(){
 
         // uses binary search to insert in correct order instead of sorting every frame
         for (int x = 0; x < 9; x++){
-            for (int i = 0; i < trees.size(); i++) { // Adds activeTrees based on distance (before rendering) so transparency occurs correctly.
+            for (size_t i = 0; i < trees[x].size(); i++) { // Adds activeTrees based on distance (before rendering) so transparency occurs correctly.
                 trees[x][i].distanceFromCamera = renderDistanceCheck(cameraPos, trees[x][i].modelMatrix[3]);
 
                 if (trees[x][i].distanceFromCamera < DESPAWN_DISTANCE) {

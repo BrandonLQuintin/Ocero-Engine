@@ -2,3 +2,5 @@
 *.o
 *.depend
 *.csv
+build
+.cache

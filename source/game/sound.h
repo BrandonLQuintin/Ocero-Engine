@@ -5,7 +5,9 @@
 #include "../globals.h"
 
 extern std::vector<sf::Sound> sounds;
-extern sf::SoundBuffer buffer;
+
+// Lazy accessor to avoid static initialization issues
+sf::SoundBuffer& getPunchBuffer();
 
 bool loadSoundBuffer(const std::string& filePath);
 
