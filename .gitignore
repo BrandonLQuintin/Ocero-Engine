@@ -4,3 +4,6 @@
 *.csv
 build
 .cache
+
+# Music files (licensed, cannot be redistributed)
+source/resources/music/*.wav
